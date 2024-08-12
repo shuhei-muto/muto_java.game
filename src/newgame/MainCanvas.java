@@ -16,7 +16,7 @@ public class MainCanvas extends Canvas implements Runnable {
 	     * コンストラクタ
 	     *****************************/
 	    public MainCanvas() {
-	        setPreferredSize(new Dimension(800, 600));
+	        setPreferredSize(new Dimension(1000, 700));
 	    }
 	    
 	    /*****************************

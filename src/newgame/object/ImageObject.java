@@ -51,12 +51,12 @@ public class ImageObject extends GameObject {
     	// イメージの描画
     	
     	
-    	int scalingFactorWidth = (int)(width*scaleWidth);
-    	int scalingFactorHeight = (int)(height*scaleHeight);
+//    	int scalingFactorWidth = (int)(width*scaleWidth);
+//    	int scalingFactorHeight = (int)(height*scaleHeight);
     	
     	g.drawImage( image, 
-    			x - (int)(scalingFactorWidth/2), 
-    			y - (int)(scalingFactorHeight/2), 
+    			0, 
+    			0, 
     			(int)(width*scaleWidth), 
     			(int)(height*scaleHeight),  
     			null);
