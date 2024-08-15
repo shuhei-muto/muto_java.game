@@ -1,13 +1,8 @@
 package newgame;
 
-import java.awt.Image;
-import java.io.IOException;
-
 import javax.swing.JFrame;
-
-import newgame.object.ImageObject;
-import newgame.util.GameObjectManager;
-import newgame.util.ImageManager;
+import newgame.screen.ScreenManager;
+import newgame.screen.GameStartScreen;
 import newgame.util.KeyManager;
 
 public class MainApp {
@@ -18,17 +13,15 @@ public class MainApp {
 	    public static void main(String[] args) {
 	    	
 	    	
+	    	//スタート画面のインスタンスを取得
+	    	GameStartScreen gss = new GameStartScreen();
+	    	
 	    	// 初期化 - 読み込み処理
-	    	try {
-	    		ImageManager.getInstance().init();
-	    	} catch (IOException e) {
-	    	    e.printStackTrace();
-	    	}
+    		ScreenManager.getInstance().setScreen(gss);
 	    	
 	    	
 	    	// フレーム生成
 	        JFrame frame = new JFrame("Simple Game");
-	        
 
 	        // キャンバス生成
 	        MainCanvas canvas = new MainCanvas();
@@ -48,10 +41,10 @@ public class MainApp {
 	        
 	        
 	        // テストゲームオブジェクト表示
-	        ImageObject test = new ImageObject();
-	        Image image = ImageManager.getInstance().getImage();
-	        test.setImage(image);
-	        GameObjectManager.getInstance().add(test);
+//	        ImageObject test = new ImageObject();
+//	        Image image = ImageManager.getInstance().getImage();
+//	        test.setImage(image);
+//	        GameObjectManager.getInstance().add(test);
 	        
 	        
 	        // キー入力設定

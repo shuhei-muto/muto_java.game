@@ -5,8 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
-
-import newgame.util.GameObjectManager;
+import newgame.screen.ScreenManager;
 
 public class MainCanvas extends Canvas implements Runnable {
 	    private boolean running = false;
@@ -66,9 +65,9 @@ public class MainCanvas extends Canvas implements Runnable {
 	     *****************************/
 	    private void update() {
 	    	// メイン更新処理
-	    	GameObjectManager.getInstance().updateAll();
+	    	ScreenManager.getInstance().update();
 	    	// 更新が終わったら、削除対象になったものの掃除
-	    	GameObjectManager.getInstance().cleanupAll();
+//	    	GameObjectManager.getInstance().cleanupAll();
 	    }
 	    /*****************************
 	     * メイン描画処理
@@ -94,7 +93,8 @@ public class MainCanvas extends Canvas implements Runnable {
 //	        g.setColor(Color.BLACK);
 //	        g.drawString("FPS: aaaaaaaaaaaaa", 10, 20);
 	        
-	    	GameObjectManager.getInstance().drawAll(g);
+//	    	GameObjectManager.getInstance().drawAll(g);
+	        ScreenManager.getInstance().draw(g);
 	        
 	        // 使い終わったのでリソース破棄
 	        g.dispose();
