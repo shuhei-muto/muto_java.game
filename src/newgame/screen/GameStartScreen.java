@@ -11,40 +11,40 @@ import newgame.util.KeyManager;
 
 public class GameStartScreen extends Screen {
 	
-	 private Image background;
-	 private Image administrator;
-	 private boolean startScreen = true;
+	private Image background;
+	private Image administrator;
+	private boolean startScreen = true;
 	
-	 @Override
+	@Override
 	public void init() throws IOException {
 		// 背景画像とその他の画像読み込み
-        background = ImageIO.read(getClass().getClassLoader().getResource("res/img/backimage/start.jpg"));
-        administrator = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/administrator.png"));
+		background = ImageIO.read(getClass().getClassLoader().getResource("res/img/backimage/start.jpg"));
+		administrator = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/administrator.png"));
 	}
 
-	 public void update() {
-			// KeyManagerインスタンスを取得
-	        KeyManager keyManager = KeyManager.getInstance();
-	        
-	        //エンターキーを押された時の画面遷移
-	        if (keyManager.isKeyPressed(KeyEvent.VK_ENTER)) {
-	        	startScreen = !startScreen;
-	        	if (!startScreen) {
-	                NameScreen nextScreen = new NameScreen();
-	                try {
-	                    nextScreen.init(); // 次の画面の初期化
-	                } catch (IOException e) {
-	                    e.printStackTrace();
-	                }
-	                ScreenManager.getInstance().setScreen(nextScreen);
-	            }
-	        }
-		};
+	public void update() {
+		// KeyManagerインスタンスを取得
+		KeyManager keyManager = KeyManager.getInstance();
+        
+		//エンターキーを押された時の画面遷移
+        if (keyManager.isKeyPressed(KeyEvent.VK_ENTER)) {
+        	startScreen = !startScreen;
+        	if (!startScreen) {
+        		NameScreen nextScreen = new NameScreen();
+        		try {
+                	nextScreen.init(); // 次の画面の初期化
+        		} catch (IOException e) {
+                    e.printStackTrace();
+                }
+                ScreenManager.getInstance().setScreen(nextScreen);
+            }
+        }
+	};
 
 	@Override
 	public void draw(Graphics g) {
 		// 背景画像がなければ帰る
-		if (background==null) return;
+		if (background == null) return;
 		
 		//ここに描画するものを入れていく
 		g.drawImage( background, 0, 0, 1000, 700, null);	//int x, int y, int width, int height

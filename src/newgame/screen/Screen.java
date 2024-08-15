@@ -10,9 +10,9 @@ public abstract class Screen {
 	
 	public abstract void init() throws IOException;
 	public abstract void update();
-    public abstract void draw(Graphics g);
-    public abstract void dispose();
-    public abstract void cleanup();
+	public abstract void draw(Graphics g);
+	public abstract void dispose();
+	public abstract void cleanup();
     
     /********************************
      * isDeleteのゲッター
