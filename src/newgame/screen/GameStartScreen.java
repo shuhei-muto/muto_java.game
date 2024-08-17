@@ -9,11 +9,23 @@ import javax.imageio.ImageIO;
 import java.io.IOException;
 import newgame.util.KeyManager;
 
+
 public class GameStartScreen extends Screen {
 	
 	private Image background;
 	private Image administrator;
 	private boolean startScreen = true;
+	private int count = 0;
+	private int step = 0;
+	private String message1;
+	private String message2;
+	private String message3;
+	int y = 430;
+	boolean loop = true;
+	String[] args;
+	StringBuilder text1 = new StringBuilder();
+	StringBuilder text2 = new StringBuilder();
+	StringBuilder text3 = new StringBuilder();
 	
 	@Override
 	public void init() throws IOException {
@@ -39,6 +51,8 @@ public class GameStartScreen extends Screen {
                 ScreenManager.getInstance().setScreen(nextScreen);
             }
         }
+        
+        
 	};
 
 	@Override
@@ -58,14 +72,52 @@ public class GameStartScreen extends Screen {
         g.setColor(Color.BLACK);
         g.setFont(new Font("Serif", Font.PLAIN, 24));
         String fixedText = "管理人：";
-        g.drawString(fixedText, 60, 430);
+        g.drawString(fixedText, x+10, 430);
+        g.drawString(text1.toString(), x+100, y);
+        g.drawString(text2.toString(), x+100, y);
+        
+        if (step == 0) {
+        	message1 = "あのモンスターを倒しに行くのか!?";
+        	if (count < message1.length()) {
+        		text1.append(message1.charAt(count));
+        		System.out.println(text1.toString());
+        		count++;
+        	} else {
+        		step++;    		
+        		y += 30;
+        		count = 0;
+        		System.out.println();
+        	}
+        } else if(step == 1) {
+        	message2 = "せめて装備だけは備えておけ!";
+        	if (count < message2.length()) {
+        		text2.append(message2.charAt(count));
+        		System.out.println(text2.toString());
+        		count++;
+        	} else {
+        		step++;    		
+        		y += 30;
+        		count = 0;
+        		System.out.println();
+        	}
+        } else if(step == 2) {
+        	message3 = "その前におまえさんの名前はなんじゃったかな？";
+        } else {
+        	return;
+        }
+        
+        
+        
+        
+        
         // 表示させたい文字列
-        String message1 = "あのモンスターを倒しに行くのか!?";
-        g.drawString(message1, x+10, 430);
-        String message2 = "せめて装備だけは備えておけ!";
-        g.drawString(message2, x+10, 460);
-        String message3 = "その前におまえさんの名前はなんじゃったかな？ ▼";
-        g.drawString(message3, x+10, 490);
+//        String message1 = "あのモンスターを倒しに行くのか!?";
+        
+//        String message2 = "せめて装備だけは備えておけ!";
+//        g.drawString(message2, x+10, 460);
+//        String message3 = "その前におまえさんの名前はなんじゃったかな？ ▼";
+//        g.drawString(message3, x+10, 490);
+        
 		
 	};
 

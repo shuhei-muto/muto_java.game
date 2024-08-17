@@ -19,6 +19,7 @@ public class MainApp {
 	    	// 初期化 - 読み込み処理
     		ScreenManager.getInstance().setScreen(gss);
 	    	
+    		
 	    	
 	    	// フレーム生成
 	        JFrame frame = new JFrame("Simple Game");

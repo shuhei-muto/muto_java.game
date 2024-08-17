@@ -1,5 +1,6 @@
 package newgame.screen;
 
+import javax.swing.*;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -17,6 +18,8 @@ public class NameScreen extends Screen {
 	private Image moneyButton;
 	public int price;
 	private boolean nameScreen = true;
+	private boolean text = true;
+	private boolean button = false;
 	
 	@Override
 	public void init() throws IOException {
@@ -51,27 +54,39 @@ public class NameScreen extends Screen {
 		
 		//ここに描画するものを入れていく
 		g.drawImage(background, 0, 0, 1000, 700, null);		//int x, int y, int width, int height
-		Image scaledDeButton = decisionButton.getScaledInstance(120, 60, Image.SCALE_SMOOTH);
-		int centerX_dB = (1000 - scaledDeButton.getWidth(null)) / 2 ;
-		g.drawImage(scaledDeButton, centerX_dB, 450, null);
-		
 		Image scaledmoneyButton = moneyButton.getScaledInstance(400, 80, Image.SCALE_SMOOTH);
 		int centerX_mB = (1000 - scaledmoneyButton.getWidth(null)) / 2 ;
 		g.drawImage(scaledmoneyButton, centerX_mB, 550, null);
+		Image scaledDeButton = decisionButton.getScaledInstance(120, 60, Image.SCALE_SMOOTH);
+		int centerX_dB = (1000 - scaledDeButton.getWidth(null)) / 2 ;
 		g.setColor(Color.BLACK);
 		g.setFont(new Font("Serif", Font.PLAIN, 24));
 		//ここにガチャで回して出た所持金を取得
 		
-		String money = "所持金：" + price;
+		String money = "所持金：" + price;	//ガチャ回した後priceに金額が入る
 		g.drawString(money, 400, 595);
-		
-		g.setColor(Color.WHITE);	//名前が入る部分の四角
-		g.fillRect(200, 300, 600, 100);		//int x, int y, int width, int height
-		
 		g.setColor(Color.BLACK);
 		g.setFont(new Font("Serif", Font.PLAIN, 24));
 		String name = "勇者";	//ガチャで回した名前が入る
 		g.drawString(name, 475, 360);
+		
+		g.setColor(Color.WHITE);	//名前が入る四角の部分
+		g.fillRect(200, 300, 600, 100);		//int x, int y, int width, int height
+		
+		// タイマーを使って3秒後に文字を消す
+        Timer timer = new Timer(3000, e -> {
+            text = false;
+            button = true;
+        });
+        timer.setRepeats(false); // タイマーは一度だけ動作させる
+        timer.start();
+		
+        if (text && !button) {
+        	g.drawString("Loading......", 450, 200);
+        } else if (!text && button) {
+        	g.drawImage(scaledDeButton, centerX_dB, 450, null);
+    		g.drawString("Enter", 475, 525);
+        }
 		
 	};
 	

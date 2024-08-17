@@ -21,24 +21,41 @@ public class BattleScreen extends Screen {
 	private Image w_normal_attack;
 	private Image w_special_attack;
 	
-	private boolean startScreen = true;
+	private boolean BattleScreen = true;
 	
 	@Override
 	public void init() throws IOException {
 		// 背景画像とその他の画像読み込み
-        background = ImageIO.read(getClass().getClassLoader().getResource("res/img/backimage/battle.jpg"));
-        dragon = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/dragon.gif"));
-        warrior = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/warrior.gif"));
-        w_first_evolution = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/first_evolution.gif"));
-        w_second_evolution = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/second_evolution.gif"));
-        d_normal_attack = ImageIO.read(getClass().getClassLoader().getResource("res/img/effect/D_Normal_attack.gif"));
-        flame = ImageIO.read(getClass().getClassLoader().getResource("res/img/effect/flame.gif"));
-        w_normal_attack = ImageIO.read(getClass().getClassLoader().getResource("res/img/effect/W_Normal_attack.gif"));
-        w_special_attack = ImageIO.read(getClass().getClassLoader().getResource("res/img/effect/Special_attack.gif"));
+		background = ImageIO.read(getClass().getClassLoader().getResource("res/img/backimage/battle.jpg"));
+		dragon = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/dragon.gif"));
+		warrior = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/warrior.gif"));
+		w_first_evolution = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/first_evolution.gif"));
+		w_second_evolution = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/second_evolution.gif"));
+		d_normal_attack = ImageIO.read(getClass().getClassLoader().getResource("res/img/effect/D_Normal_attack.gif"));
+		flame = ImageIO.read(getClass().getClassLoader().getResource("res/img/effect/flame.gif"));
+		w_normal_attack = ImageIO.read(getClass().getClassLoader().getResource("res/img/effect/W_Normal_attack.gif"));
+		w_special_attack = ImageIO.read(getClass().getClassLoader().getResource("res/img/effect/Special_attack.gif"));
         
 	}
 	
-	public void update() {};
+	public void update() {
+		// KeyManagerインスタンスを取得
+		KeyManager keyManager = KeyManager.getInstance();
+		        
+		//エンターキーを押された時の画面遷移
+		if (keyManager.isKeyPressed(KeyEvent.VK_ENTER)) {
+			BattleScreen = !BattleScreen;
+			if (!BattleScreen) {
+				VictoryScreen nextScreen = new VictoryScreen();
+				try {
+					nextScreen.init(); // 次の画面の初期化
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				ScreenManager.getInstance().setScreen(nextScreen);
+			}
+		}
+	};
 	
 	@Override
 	public void draw(Graphics g) {
@@ -55,8 +72,8 @@ public class BattleScreen extends Screen {
 	public void cleanup() {};
 	
 	// 画像を取得するためのメソッド
-    public Image getImage() {
-        return background;
+	public Image getImage() {
+		return background;
     }
 }
 
