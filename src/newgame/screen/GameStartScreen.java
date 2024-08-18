@@ -73,8 +73,9 @@ public class GameStartScreen extends Screen {
         g.setFont(new Font("Serif", Font.PLAIN, 24));
         String fixedText = "管理人：";
         g.drawString(fixedText, x+10, 430);
-        g.drawString(text1.toString(), x+100, y);
-        g.drawString(text2.toString(), x+100, y);
+        g.drawString(text1.toString(), x+100, 430);
+        g.drawString(text2.toString(), x+100, 460);
+        g.drawString(text3.toString(), x+100, 490);
         
         if (step == 0) {
         	message1 = "あのモンスターを倒しに行くのか!?";
@@ -83,8 +84,7 @@ public class GameStartScreen extends Screen {
         		System.out.println(text1.toString());
         		count++;
         	} else {
-        		step++;    		
-        		y += 30;
+        		step++;
         		count = 0;
         		System.out.println();
         	}
@@ -102,6 +102,16 @@ public class GameStartScreen extends Screen {
         	}
         } else if(step == 2) {
         	message3 = "その前におまえさんの名前はなんじゃったかな？";
+        	if (count < message3.length()) {
+        		text3.append(message3.charAt(count));
+        		System.out.println(text3.toString());
+        		count++;
+        	} else {
+        		step++;    		
+        		y += 30;
+        		count = 0;
+        		System.out.println();
+        	}
         } else {
         	return;
         }

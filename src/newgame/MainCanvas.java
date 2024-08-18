@@ -16,6 +16,11 @@ public class MainCanvas extends Canvas implements Runnable {
 	     *****************************/
 	    public MainCanvas() {
 	        setPreferredSize(new Dimension(1000, 700));
+	        
+	        // GachaMainScreen インスタンスを生成し、KeyListener として追加
+//	        GachaMainScreen gachaScreen = new GachaMainScreen();
+//	        addKeyListener(gachaScreen);
+//	        requestFocusInWindow(); // フォーカスを要求する
 	    }
 	    
 	    /*****************************

@@ -5,7 +5,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.IOException;
@@ -24,7 +23,8 @@ public class GachaMainScreen extends Screen {
 	private BufferedImage[] images;
 	private int currentIndex = 0; // `▼`マークの現在の位置
 	private boolean gachaMainScreen = true;
-	
+	int markerX = 180;
+	int markerY = 560;
 	 
 	@Override
 	public void init() throws IOException {
@@ -42,13 +42,33 @@ public class GachaMainScreen extends Screen {
     	images[0] = (BufferedImage) bronze_gacha;
     	images[1] = (BufferedImage) silver_gacha;
     	images[2] = (BufferedImage) gold_gacha;
+    	
+    	// KeyListenerを追加する
+//        this.addKeyListener(this);
+        
+        // キーボード入力を受け付けるためにフォーカスを設定する
+//        this.setFocusable(true);
+//        this.requestFocusInWindow();
 	}
-	 
+
 	public void update() {
 		// KeyManagerインスタンスを取得
         KeyManager keyManager = KeyManager.getInstance();
         
         //エンターキーを押された時の画面遷移
+        if (keyManager.isKeyPressed(KeyEvent.VK_LEFT)) {
+        	if(currentIndex > 0) {
+        		currentIndex--;	// 左矢印キーで左に移動
+        	}
+        	System.out.println(currentIndex);
+        }
+        
+        if (keyManager.isKeyPressed(KeyEvent.VK_RIGHT)) {
+        	if(currentIndex < images.length - 1) {
+        		currentIndex++;	// 右矢印キーで右に移動
+        		System.out.println(currentIndex);
+        	}
+        }
         if (keyManager.isKeyPressed(KeyEvent.VK_ENTER)) {
         	gachaMainScreen = !gachaMainScreen;
         	if (!gachaMainScreen) {
@@ -85,21 +105,19 @@ public class GachaMainScreen extends Screen {
 		g.setFont(new Font("Serif", Font.PLAIN, 20));
 		String money = "所持金：";
 		g.drawString(money, 720, 60);
-		
-		
-		int x = 50;
-        int y = 450;
+        
         int spacing = 30; // 画像間のスペース
         
         // `▼`マークを描画
-        int markerX = 185 + currentIndex * (280 + spacing);
-        int markerY = y + 100 + 10;
+        markerX = 180 + (currentIndex * (280 + spacing));
+//        int markerY = y + 100 + 10;		//ガチャボタンのy座標 + ボタンの縦幅 + スペース
         g.setFont(new Font("Serif", Font.BOLD, 24));
         g.drawString("▲", markerX, markerY);
+        
 	}
 	 
 	public void dispose() {};
-		
+	
 	public void cleanup() {};
 	
 	// 選択された画像に対する処理
