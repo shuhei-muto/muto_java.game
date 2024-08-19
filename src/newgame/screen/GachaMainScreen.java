@@ -25,6 +25,8 @@ public class GachaMainScreen extends Screen {
 	private boolean gachaMainScreen = true;
 	int markerX = 180;
 	int markerY = 560;
+	private long lastMoveTime = 0;	//最後に更新した時間
+	private long moveDelay = 300;	//遅延させる時間
 	 
 	@Override
 	public void init() throws IOException {
@@ -42,33 +44,33 @@ public class GachaMainScreen extends Screen {
     	images[0] = (BufferedImage) bronze_gacha;
     	images[1] = (BufferedImage) silver_gacha;
     	images[2] = (BufferedImage) gold_gacha;
-    	
-    	// KeyListenerを追加する
-//        this.addKeyListener(this);
-        
-        // キーボード入力を受け付けるためにフォーカスを設定する
-//        this.setFocusable(true);
-//        this.requestFocusInWindow();
 	}
 
 	public void update() {
 		// KeyManagerインスタンスを取得
         KeyManager keyManager = KeyManager.getInstance();
+        long currentTime = System.currentTimeMillis();	//現在の時間を取得
+        
+        //キーが押された際に一定の遅延を持たせる
+        if(currentTime - lastMoveTime > moveDelay) {
+	        if (keyManager.isKeyPressed(KeyEvent.VK_LEFT)) {
+	        	if(currentIndex > 0) {
+	        		currentIndex--;	// 左矢印キーで左に移動
+	        	}
+	        	lastMoveTime = currentTime;	//最後の移動時間を更新
+	        	System.out.println(currentIndex);
+	        }
+        
+	        if (keyManager.isKeyPressed(KeyEvent.VK_RIGHT)) {
+	        	if(currentIndex < images.length - 1) {
+	        		currentIndex++;	// 右矢印キーで右に移動
+	        		System.out.println(currentIndex);
+	        	}
+	        	lastMoveTime = currentTime;	//最後の移動時間を更新
+	        }
+        }
         
         //エンターキーを押された時の画面遷移
-        if (keyManager.isKeyPressed(KeyEvent.VK_LEFT)) {
-        	if(currentIndex > 0) {
-        		currentIndex--;	// 左矢印キーで左に移動
-        	}
-        	System.out.println(currentIndex);
-        }
-        
-        if (keyManager.isKeyPressed(KeyEvent.VK_RIGHT)) {
-        	if(currentIndex < images.length - 1) {
-        		currentIndex++;	// 右矢印キーで右に移動
-        		System.out.println(currentIndex);
-        	}
-        }
         if (keyManager.isKeyPressed(KeyEvent.VK_ENTER)) {
         	gachaMainScreen = !gachaMainScreen;
         	if (!gachaMainScreen) {

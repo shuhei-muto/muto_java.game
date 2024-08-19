@@ -81,36 +81,28 @@ public class GameStartScreen extends Screen {
         	message1 = "あのモンスターを倒しに行くのか!?";
         	if (count < message1.length()) {
         		text1.append(message1.charAt(count));
-        		System.out.println(text1.toString());
         		count++;
         	} else {
         		step++;
         		count = 0;
-        		System.out.println();
         	}
         } else if(step == 1) {
         	message2 = "せめて装備だけは備えておけ!";
         	if (count < message2.length()) {
         		text2.append(message2.charAt(count));
-        		System.out.println(text2.toString());
         		count++;
         	} else {
-        		step++;    		
-        		y += 30;
+        		step++;
         		count = 0;
-        		System.out.println();
         	}
         } else if(step == 2) {
         	message3 = "その前におまえさんの名前はなんじゃったかな？";
         	if (count < message3.length()) {
         		text3.append(message3.charAt(count));
-        		System.out.println(text3.toString());
         		count++;
         	} else {
-        		step++;    		
-        		y += 30;
+        		step++;
         		count = 0;
-        		System.out.println();
         	}
         } else {
         	return;
