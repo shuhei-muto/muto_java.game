@@ -16,14 +16,15 @@ public class NameScreen extends Screen {
 	private Image background;
 	private Image decisionButton;
 	private Image moneyButton;
-	public int price;
+	public int money;	//ガチャで回したものを入れる
+	public String name;	//ガチャで回したものを入れる
 	private boolean nameScreen = true;
 	private boolean text = true;
 	private boolean button = false;
 	
 	@Override
 	public void init() throws IOException {
-		// 背景画像の読み込み
+		// 背景とその他画像の読み込み
         background = ImageIO.read(getClass().getClassLoader().getResource("res/img/backimage/decide_name.jpg"));
         decisionButton = ImageIO.read(getClass().getClassLoader().getResource("res/img/button/decision_button.png"));
         moneyButton = ImageIO.read(getClass().getClassLoader().getResource("res/img/button/money.png"));
@@ -61,19 +62,19 @@ public class NameScreen extends Screen {
 		int centerX_dB = (1000 - scaledDeButton.getWidth(null)) / 2 ;
 		g.setColor(Color.BLACK);
 		g.setFont(new Font("Serif", Font.PLAIN, 24));
-		//ここにガチャで回して出た所持金を取得
 		
-		String money = "所持金：" + price;	//ガチャ回した後priceに金額が入る
-		g.drawString(money, 400, 595);
-		g.setColor(Color.BLACK);
-		g.setFont(new Font("Serif", Font.PLAIN, 24));
-		String name = "勇者";	//ガチャで回した名前が入る
+		
+		name = "勇者";	//ガチャで回した後に変数nameに名前が入る
+		String moneyText = "所持金：" + money;	//ガチャ回した後に変数moneyに金額が入る
+		
 		g.drawString(name, 475, 360);
-		
+		g.drawString(moneyText, 400, 595);
+		g.setFont(new Font("Serif", Font.PLAIN, 24));
 		g.setColor(Color.WHITE);	//名前が入る四角の部分
 		g.fillRect(200, 300, 600, 100);		//int x, int y, int width, int height
 		
-		// タイマーを使って3秒後に文字を消す
+		
+		// タイマーを使って3秒後にLoodingの文字を消す＆決定ボタンを表示
         Timer timer = new Timer(3000, e -> {
             text = false;
             button = true;
