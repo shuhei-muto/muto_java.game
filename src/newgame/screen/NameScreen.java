@@ -60,20 +60,20 @@ public class NameScreen extends Screen {
 		g.drawImage(scaledmoneyButton, centerX_mB, 550, null);
 		Image scaledDeButton = decisionButton.getScaledInstance(120, 60, Image.SCALE_SMOOTH);
 		int centerX_dB = (1000 - scaledDeButton.getWidth(null)) / 2 ;
-		g.setColor(Color.BLACK);
+		g.setColor(Color.WHITE);	//名前が入る四角の部分
+		g.fillRect(200, 300, 600, 100);		//int x, int y, int width, int height
 		g.setFont(new Font("Serif", Font.PLAIN, 24));
+		g.setColor(Color.BLACK);
 		
 		
 		name = "勇者";	//ガチャで回した後に変数nameに名前が入る
 		String moneyText = "所持金：" + money;	//ガチャ回した後に変数moneyに金額が入る
 		
+		
 		g.drawString(name, 475, 360);
 		g.drawString(moneyText, 400, 595);
 		g.setFont(new Font("Serif", Font.PLAIN, 24));
-		g.setColor(Color.WHITE);	//名前が入る四角の部分
-		g.fillRect(200, 300, 600, 100);		//int x, int y, int width, int height
-		
-		
+		g.setColor(Color.WHITE);
 		// タイマーを使って3秒後にLoodingの文字を消す＆決定ボタンを表示
         Timer timer = new Timer(3000, e -> {
             text = false;
