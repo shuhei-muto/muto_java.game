@@ -1,14 +1,18 @@
 package newgame.screen;
 
-import javax.swing.*;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.Timer;
+
+import newgame.DatabaseConnection;
+import newgame.DatabaseConnection.CharanameResult;
 import newgame.util.KeyManager;
 
 public class NameScreen extends Screen {
@@ -28,12 +32,14 @@ public class NameScreen extends Screen {
         background = ImageIO.read(getClass().getClassLoader().getResource("res/img/backimage/decide_name.jpg"));
         decisionButton = ImageIO.read(getClass().getClassLoader().getResource("res/img/button/decision_button.png"));
         moneyButton = ImageIO.read(getClass().getClassLoader().getResource("res/img/button/money.png"));
+        CharanameResult charaResult = DatabaseConnection.charaname();
+		name = charaResult.getName();	//ガチャで回した後に変数nameに名前が入る
+		money = charaResult.getMoney();
 	}
 	
 	public void update() {
 		// KeyManagerインスタンスを取得
         KeyManager keyManager = KeyManager.getInstance();
-        
         //エンターキーを押された時の画面遷移
         if (keyManager.isKeyPressed(KeyEvent.VK_ENTER)) {
         	nameScreen = !nameScreen;
@@ -62,16 +68,7 @@ public class NameScreen extends Screen {
 		int centerX_dB = (1000 - scaledDeButton.getWidth(null)) / 2 ;
 		g.setColor(Color.WHITE);	//名前が入る四角の部分
 		g.fillRect(200, 300, 600, 100);		//int x, int y, int width, int height
-		g.setFont(new Font("Serif", Font.PLAIN, 24));
-		g.setColor(Color.BLACK);
 		
-		
-		name = "勇者";	//ガチャで回した後に変数nameに名前が入る
-		String moneyText = "所持金：" + money;	//ガチャ回した後に変数moneyに金額が入る
-		
-		
-		g.drawString(name, 475, 360);
-		g.drawString(moneyText, 400, 595);
 		g.setFont(new Font("Serif", Font.PLAIN, 24));
 		g.setColor(Color.WHITE);
 		// タイマーを使って3秒後にLoodingの文字を消す＆決定ボタンを表示
@@ -87,6 +84,20 @@ public class NameScreen extends Screen {
         } else if (!text && button) {
         	g.drawImage(scaledDeButton, centerX_dB, 450, null);
     		g.drawString("Enter", 475, 525);
+    		
+    		// GraphicsオブジェクトからFontMetricsを取得
+    		FontMetrics fm = g.getFontMetrics();
+    		// 文字列の幅を取得
+    		int stringWidth = fm.stringWidth(name);
+    		// 中心位置を計算
+    		int centerX =  stringWidth / 2;
+    		
+    		g.setFont(new Font("Serif", Font.PLAIN, 24));
+    		g.setColor(Color.BLACK);
+    		String moneyText = "所持金：" + money;	//ガチャ回した後に変数moneyに金額が入る
+    		g.drawString(name, 500 - centerX, 360);
+    		g.drawString(moneyText, 420, 595);
+    		
         }
 		
 	};
