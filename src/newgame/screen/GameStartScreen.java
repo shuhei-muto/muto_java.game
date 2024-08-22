@@ -96,7 +96,7 @@ public class GameStartScreen extends Screen {
         		count = 0;
         	}
         } else if(step == 2) {
-        	message3 = "その前におまえさんの名前はなんじゃったかな？";
+        	message3 = "その前におまえさんの名前はなんじゃったかな？ ▼";
         	if (count < message3.length()) {
         		text3.append(message3.charAt(count));
         		count++;
@@ -107,18 +107,6 @@ public class GameStartScreen extends Screen {
         } else {
         	return;
         }
-        
-        
-        
-        
-        
-        // 表示させたい文字列
-//        String message1 = "あのモンスターを倒しに行くのか!?";
-        
-//        String message2 = "せめて装備だけは備えておけ!";
-//        g.drawString(message2, x+10, 460);
-//        String message3 = "その前におまえさんの名前はなんじゃったかな？ ▼";
-//        g.drawString(message3, x+10, 490);
         
 		
 	};

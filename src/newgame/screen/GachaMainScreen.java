@@ -23,8 +23,8 @@ public class GachaMainScreen extends Screen {
 	private BufferedImage[] images;
 	private int currentIndex = 0; // `▼`マークの現在の位置
 	private boolean gachaMainScreen = true;
-	int markerX = 180;
-	int markerY = 560;
+	int markerX = 180;	//▲マーク用のx座標初期値
+	int markerY = 560;	//▲マーク用のy座標初期値
 	private long lastMoveTime = 0;	//最後に更新した時間
 	private long moveDelay = 300;	//遅延させる時間
 	 
@@ -40,10 +40,11 @@ public class GachaMainScreen extends Screen {
         silver_gacha = ImageIO.read(getClass().getClassLoader().getResource("res/img/button/silver_gacha.png"));
         bronze_gacha = ImageIO.read(getClass().getClassLoader().getResource("res/img/button/bronze_gacha.png"));
         battle_button = ImageIO.read(getClass().getClassLoader().getResource("res/img/button/battle_button.png"));
-        images = new BufferedImage[3];
+        images = new BufferedImage[4];
     	images[0] = (BufferedImage) bronze_gacha;
     	images[1] = (BufferedImage) silver_gacha;
     	images[2] = (BufferedImage) gold_gacha;
+    	images[3] = (BufferedImage) battle_button;
 	}
 
 	public void update() {
@@ -53,18 +54,23 @@ public class GachaMainScreen extends Screen {
         
         //キーが押された際に一定の遅延を持たせる
         if(currentTime - lastMoveTime > moveDelay) {
+        	//左矢印を押したら▲が左に移動(反時計周り)
 	        if (keyManager.isKeyPressed(KeyEvent.VK_LEFT)) {
 	        	if(currentIndex > 0) {
 	        		currentIndex--;	// 左矢印キーで左に移動
+	        	} else if(currentIndex == 0) {
+	        		currentIndex = 3;
 	        	}
 	        	lastMoveTime = currentTime;	//最後の移動時間を更新
 	        	System.out.println(currentIndex);
 	        }
-        
+	        //右矢印を押したら▲が右に移動(時計回り)
 	        if (keyManager.isKeyPressed(KeyEvent.VK_RIGHT)) {
 	        	if(currentIndex < images.length - 1) {
 	        		currentIndex++;	// 右矢印キーで右に移動
 	        		System.out.println(currentIndex);
+	        	} else if(currentIndex == 3) {
+	        		currentIndex = 0;
 	        	}
 	        	lastMoveTime = currentTime;	//最後の移動時間を更新
 	        }
@@ -73,14 +79,27 @@ public class GachaMainScreen extends Screen {
         //エンターキーを押された時の画面遷移
         if (keyManager.isKeyPressed(KeyEvent.VK_ENTER)) {
         	gachaMainScreen = !gachaMainScreen;
-        	if (!gachaMainScreen) {
-                GachaScreen nextScreen = new GachaScreen();
-                try {
-                    nextScreen.init(); // 次の画面の初期化
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                ScreenManager.getInstance().setScreen(nextScreen);
+        	if(currentIndex < 3) {	//ガチャボタン選択時はガチャ画面へ
+        		if (!gachaMainScreen) {
+        			handleSelection();
+        			GachaScreen nextScreen = new GachaScreen();
+        			try {
+        				nextScreen.init(); // 次表示する画面の初期化
+        			} catch (IOException e) {
+        				e.printStackTrace();
+        			}
+        			ScreenManager.getInstance().setScreen(nextScreen);
+        		}
+        	} else {	//バトル画面選択時はバトル画面へ
+        		if(!gachaMainScreen) {
+        			BattleScreen nextnextScreen = new BattleScreen();
+        			try {
+        				nextnextScreen.init();	//次表示する画面の初期化
+        			} catch (IOException e) {
+        				e.printStackTrace();
+        			}
+        			ScreenManager.getInstance().setScreen(nextnextScreen);
+        		}
         	}
         }
 	};
@@ -93,7 +112,7 @@ public class GachaMainScreen extends Screen {
 		//ここに描画するものを入れていく
 		g.drawImage(background, 0, 0, 1000, 700, null);	//int x, int y, int width, int height
 		g.drawImage(moneyButton, 650, 30, 300, 50, null);
-		g.drawImage(battle_button, 440, 600, 120, 60, null);
+		g.drawImage(battle_button, 440, 590, 120, 60, null);
 		//ガチャ金銀銅
 		g.drawImage(gold, 670, 150, 280, 280, null);
 		g.drawImage(silver, 360, 150, 280, 280, null);
@@ -102,20 +121,26 @@ public class GachaMainScreen extends Screen {
 		g.drawImage(gold_gacha, 670, 450, 280, 100, null);
 		g.drawImage(silver_gacha, 360, 450, 280, 100, null);
 		g.drawImage(bronze_gacha, 50, 450, 280, 100, null);
-		
 		g.setColor(Color.BLACK);
 		g.setFont(new Font("Serif", Font.PLAIN, 20));
-		String money = "所持金：";
+		
+		//**********ここに所持金を入れる**********************
+		String money = "所持金：" ;
+		//*************************************************
+		
 		g.drawString(money, 720, 60);
-        
         int spacing = 30; // 画像間のスペース
         
         // `▼`マークを描画
-        markerX = 180 + (currentIndex * (280 + spacing));
-//        int markerY = y + 100 + 10;		//ガチャボタンのy座標 + ボタンの縦幅 + スペース
+        if(currentIndex == 3) {		//バトルボタン選択時の座標
+        	markerX = 490;
+        	markerY = 670;
+        } else {					//ガチャボタン選択時の座標
+        	markerX = 180 + (currentIndex * (280 + spacing));
+        	markerY = 560;
+        }
         g.setFont(new Font("Serif", Font.BOLD, 24));
         g.drawString("▲", markerX, markerY);
-        
 	}
 	 
 	public void dispose() {};
@@ -128,10 +153,18 @@ public class GachaMainScreen extends Screen {
         // ここで選択された画像に対する処理を行う
         if(currentIndex == 0) {
         	System.out.println("$10");
+        	//************ここに(所持金 - $10)の計算書く****************
+        	
         } else if (currentIndex == 1) {
         	System.out.println("$50");
-        } else {
+        	//************ここに(所持金 - $50)の計算書く****************
+        	
+        } else if(currentIndex == 2) {
         	System.out.println("$100");
+        	//************ここに(所持金 - $100)の計算書く****************
+        	
+        } else {
+        	System.out.println("バトルへ");
         }
     }
 	
