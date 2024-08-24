@@ -8,6 +8,8 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import newgame.util.KeyManager;
+import javax.swing.Timer;
+import javax.swing.*;
 
 public class BattleScreen extends Screen {
 	
@@ -20,6 +22,10 @@ public class BattleScreen extends Screen {
 	private Image flame;
 	private Image w_normal_attack;
 	private Image w_special_attack;
+	private Image gifImage;
+	StringBuilder text1 = new StringBuilder();
+	private boolean text = true;
+	private boolean before_battle = false;
 	
 	private boolean BattleScreen = true;
 	
@@ -35,7 +41,9 @@ public class BattleScreen extends Screen {
 		flame = ImageIO.read(getClass().getClassLoader().getResource("res/img/effect/flame.gif"));
 		w_normal_attack = ImageIO.read(getClass().getClassLoader().getResource("res/img/effect/W_Normal_attack.gif"));
 		w_special_attack = ImageIO.read(getClass().getClassLoader().getResource("res/img/effect/Special_attack.gif"));
-        
+        String gifPath = "res/img/effect/W_Normal_attack.gif";
+        ImageIcon gifIcon = new ImageIcon(gifPath);
+        gifImage = gifIcon.getImage();
 	}
 	
 	public void update() {
@@ -64,6 +72,39 @@ public class BattleScreen extends Screen {
 		
 		//ここに描画するものを入れていく
 		g.drawImage( background, 0, 0, 1000, 700, null);	//int x, int y, int width, int height
+		g.setColor(Color.WHITE);
+		g.fillRect(100, 500, 600, 150);		//テキストエリア、コマンド等の文章が入る
+		
+		
+		//コマンド選択エリア白黒
+//		g.setColor(Color.WHITE);
+//		g.fillRect(749, 499, 152, 102);		//コマンド選択枠の表示
+//		g.setColor(Color.BLACK);
+//		g.fillRect(750, 500, 150, 100);		//コマンド選択枠の表示
+		
+		//表示するテキスト
+		g.setColor(Color.BLACK);
+        g.setFont(new Font("Serif", Font.PLAIN, 24));
+		
+		//タイマー処理
+		Timer timer = new Timer(2000, e -> {
+			text = false;
+			before_battle = true;
+		});
+		timer.start();
+		
+		if(text) {
+			g.drawString("(風の音)", 110, 530);
+		} else if(before_battle) {
+			g.setColor(Color.WHITE);
+			g.fillRect(750, 500, 150, 100);		//コマンド選択枠の表示
+			g.drawImage(dragon, 200, 100, 200, 300, null);
+			g.drawImage(warrior, 650, 250, 150, 150, null);
+			g.setColor(Color.RED);
+			g.fillRect(200, 430, 200, 10);	//ドラゴンのHPゲージ
+			g.fillRect(680, 430, 100, 10);	//戦士のHPゲージ
+		}
+		
 		
 	}
 	

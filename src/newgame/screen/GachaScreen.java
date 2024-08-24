@@ -69,7 +69,7 @@ public class GachaScreen extends Screen {
         g.drawString(text, 400, 200);
         
         g.drawString("レア度Aの武器が出た！", 360, 230);
-        g.drawString("攻撃力+10", 400, 260);		//ガチャの内容を取得して表示
+        g.drawString("攻撃力+10", 450, 260);		//ガチャの内容を取得して表示
         //ステータス
         g.drawString("【ステータス】", 210, 320);
         g.drawString("HP：", 210, 350);		//ガチャの内容を取得して表示
@@ -78,7 +78,7 @@ public class GachaScreen extends Screen {
         g.drawString("回避：", 210, 440);		//ガチャの内容を取得して表示
         g.drawString("運：", 210, 470);		//ガチャの内容を取得して表示
         
-        g.drawString("アイテム", 450, 320);
+        g.drawString("【アイテム】", 450, 320);
         g.drawString("回復薬×", 450, 350);	//×の後にガチャの内容を取得して個数を表示したい
         
         //2秒経ってから「ガチャへ戻る」ボタンを表示

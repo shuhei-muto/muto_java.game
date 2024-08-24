@@ -22,7 +22,6 @@ public class GameStartScreen extends Screen {
 	private String message3;
 	int y = 430;
 	boolean loop = true;
-	String[] args;
 	StringBuilder text1 = new StringBuilder();
 	StringBuilder text2 = new StringBuilder();
 	StringBuilder text3 = new StringBuilder();

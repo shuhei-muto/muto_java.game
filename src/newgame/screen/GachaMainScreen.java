@@ -56,10 +56,12 @@ public class GachaMainScreen extends Screen {
         if(currentTime - lastMoveTime > moveDelay) {
         	//左矢印を押したら▲が左に移動(反時計周り)
 	        if (keyManager.isKeyPressed(KeyEvent.VK_LEFT)) {
-	        	if(currentIndex > 0) {
-	        		currentIndex--;	// 左矢印キーで左に移動
+	        	if(currentIndex == 3) {
+	        		currentIndex = 0;	// 左矢印キーで左に移動
 	        	} else if(currentIndex == 0) {
 	        		currentIndex = 3;
+	        	} else {
+	        		currentIndex--;
 	        	}
 	        	lastMoveTime = currentTime;	//最後の移動時間を更新
 	        	System.out.println(currentIndex);
@@ -68,9 +70,8 @@ public class GachaMainScreen extends Screen {
 	        if (keyManager.isKeyPressed(KeyEvent.VK_RIGHT)) {
 	        	if(currentIndex < images.length - 1) {
 	        		currentIndex++;	// 右矢印キーで右に移動
-	        		System.out.println(currentIndex);
 	        	} else if(currentIndex == 3) {
-	        		currentIndex = 0;
+	        		currentIndex = 2;
 	        	}
 	        	lastMoveTime = currentTime;	//最後の移動時間を更新
 	        }
