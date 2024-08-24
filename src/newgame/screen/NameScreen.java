@@ -89,16 +89,23 @@ public class NameScreen extends Screen {
         	
         	CharanameResult charaResultLoading = DatabaseConnection.charaname();
         	String loadName =  charaResultLoading.getName();
+        	int loadMoney = charaResultLoading.getMoney();
+        	String loadMoneyText = "所持金：" ;
+        	String loadMoneyText2 = "" + loadMoney;
         	
         	int loadNameCenterX = stringCenterX(g, loadName);
+        	int loadMoneyCenterX = stringCenterX(g, loadMoneyText);
+        	
     		g.setColor(Color.BLACK);
     		g.drawString(loadName, 500 - loadNameCenterX, 360);
+    		g.drawString(loadMoneyText, 480 - loadMoneyCenterX, 595);
+    		g.drawString(loadMoneyText2, 480 + loadMoneyCenterX, 595);
         } else if (!text && button) {
         	g.drawImage(scaledDeButton, centerX_dB, 450, null);
     		g.drawString("Enter", 475, 525);
     		
-    		String moneyText = "所持金：" + money;	//ガチャ回した後に変数moneyに金額が入る
-    		
+    		String moneyText = "所持金：";
+    		String moneyText2 = "" + money;//ガチャ回した後に変数moneyに金額が入る
     		//name,moneyTextそれぞれの文字列の中央を求めます
     		int nameCenterX = stringCenterX(g ,name);
     		int moneyTextCenterX = stringCenterX(g ,moneyText);
@@ -107,7 +114,8 @@ public class NameScreen extends Screen {
     		g.setColor(Color.BLACK);
     		
     		g.drawString(name, 500 - nameCenterX, 360);
-    		g.drawString(moneyText, 500 - moneyTextCenterX, 595);
+    		g.drawString(moneyText, 480 - moneyTextCenterX, 595);
+    		g.drawString(moneyText2, 480 + moneyTextCenterX, 595);
     		
         }
 		
