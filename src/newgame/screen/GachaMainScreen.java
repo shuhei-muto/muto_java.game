@@ -2,12 +2,15 @@ package newgame.screen;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
 import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 import newgame.util.KeyManager;
 
 public class GachaMainScreen extends Screen {
@@ -27,6 +30,8 @@ public class GachaMainScreen extends Screen {
 	int markerY = 560;	//▲マーク用のy座標初期値
 	private long lastMoveTime = 0;	//最後に更新した時間
 	private long moveDelay = 300;	//遅延させる時間
+	public String name;	//ガチャで取得した名前を入れる
+	public int money;	//ガチャで取得した所持金を入れる
 	 
 	@Override
 	public void init() throws IOException {
@@ -45,6 +50,9 @@ public class GachaMainScreen extends Screen {
     	images[1] = (BufferedImage) silver_gacha;
     	images[2] = (BufferedImage) gold_gacha;
     	images[3] = (BufferedImage) battle_button;
+    	name = System.getProperty("name");
+    	//PropatyにセットするときはString型のため型変換をする
+    	money = Integer.parseInt(System.getProperty("money"));
 	}
 
 	public void update() {
@@ -84,6 +92,7 @@ public class GachaMainScreen extends Screen {
         		if (!gachaMainScreen) {
         			handleSelection();
         			GachaScreen nextScreen = new GachaScreen();
+        			System.setProperty("gachaNo", String.valueOf(currentIndex));
         			try {
         				nextScreen.init(); // 次表示する画面の初期化
         			} catch (IOException e) {
@@ -126,10 +135,10 @@ public class GachaMainScreen extends Screen {
 		g.setFont(new Font("Serif", Font.PLAIN, 20));
 		
 		//**********ここに所持金を入れる**********************
-		String money = "所持金：" ;
+		String moneyText = "所持金：$" + money;
 		//*************************************************
-		
-		g.drawString(money, 720, 60);
+		 
+		g.drawString(moneyText, 720, 60);
         int spacing = 30; // 画像間のスペース
         
         // `▼`マークを描画
@@ -173,4 +182,21 @@ public class GachaMainScreen extends Screen {
 	public Image getImage() {
 		return background;
     }
+	
+	
+	/* 文字列の中心の長さを返します
+	 *  @param g Graphicsオブジェクト
+	 *  @param s 対象の文字列
+	 *  @return center 中心までの長さ
+	 */
+	public int stringCenterX(Graphics g, String s) {
+		int center;
+		// GraphicsオブジェクトからFontMetricsを取得
+		FontMetrics fm = g.getFontMetrics();	
+		// 文字列の幅を取得
+		int stringWidth = fm.stringWidth(s);
+		// 中心位置を計算
+		center = stringWidth / 2;
+		return center;
+	}
 }

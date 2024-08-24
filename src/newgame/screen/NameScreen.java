@@ -35,6 +35,7 @@ public class NameScreen extends Screen {
         CharanameResult charaResult = DatabaseConnection.charaname();
 		name = charaResult.getName();	//ガチャで回した後に変数nameに名前が入る
 		money = charaResult.getMoney();
+		
 	}
 	
 	public void update() {
@@ -45,6 +46,9 @@ public class NameScreen extends Screen {
         	nameScreen = !nameScreen;
         	if (!nameScreen) {
                 GachaMainScreen nextScreen = new GachaMainScreen();
+                System.setProperty("name", name);
+                //setPropertyはString型を引数にするためint型から変換をする
+                System.setProperty("money", String.valueOf(money));
                 try {
                     nextScreen.init(); // 次の画面の初期化
                 } catch (IOException e) {
@@ -81,26 +85,48 @@ public class NameScreen extends Screen {
 		
         if (text && !button) {
         	g.drawString("Loading......", 450, 200);
+        	g.setFont(new Font("Serif", Font.PLAIN, 24));
+        	
+        	CharanameResult charaResultLoading = DatabaseConnection.charaname();
+        	String loadName =  charaResultLoading.getName();
+        	
+        	int loadNameCenterX = stringCenterX(g, loadName);
+    		g.setColor(Color.BLACK);
+    		g.drawString(loadName, 500 - loadNameCenterX, 360);
         } else if (!text && button) {
         	g.drawImage(scaledDeButton, centerX_dB, 450, null);
     		g.drawString("Enter", 475, 525);
     		
-    		// GraphicsオブジェクトからFontMetricsを取得
-    		FontMetrics fm = g.getFontMetrics();
-    		// 文字列の幅を取得
-    		int stringWidth = fm.stringWidth(name);
-    		// 中心位置を計算
-    		int centerX =  stringWidth / 2;
+    		String moneyText = "所持金：" + money;	//ガチャ回した後に変数moneyに金額が入る
+    		
+    		//name,moneyTextそれぞれの文字列の中央を求めます
+    		int nameCenterX = stringCenterX(g ,name);
+    		int moneyTextCenterX = stringCenterX(g ,moneyText);
     		
     		g.setFont(new Font("Serif", Font.PLAIN, 24));
     		g.setColor(Color.BLACK);
-    		String moneyText = "所持金：" + money;	//ガチャ回した後に変数moneyに金額が入る
-    		g.drawString(name, 500 - centerX, 360);
-    		g.drawString(moneyText, 420, 595);
+    		
+    		g.drawString(name, 500 - nameCenterX, 360);
+    		g.drawString(moneyText, 500 - moneyTextCenterX, 595);
     		
         }
 		
 	};
+	/* 文字列の中心の長さを返します
+	 *  @param g Graphicsオブジェクト
+	 *  @param s 対象の文字列
+	 *  @return center 中心までの長さ
+	 */
+	public int stringCenterX(Graphics g, String s) {
+		int center;
+		// GraphicsオブジェクトからFontMetricsを取得
+		FontMetrics fm = g.getFontMetrics();	
+		// 文字列の幅を取得
+		int stringWidth = fm.stringWidth(s);
+		// 中心位置を計算
+		center = stringWidth / 2;
+		return center;
+	}
 	
 	public void dispose() {};
 	

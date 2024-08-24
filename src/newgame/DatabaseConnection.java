@@ -13,6 +13,7 @@ public class DatabaseConnection {
     // ガチャの結果を表すクラス
 	// 内部クラスではなく独立のクラスにするのが理想
     public static class GachaResult {
+    	/* DBとクラスで変数の型に相違があります。type,rarityはDBではint */
         private int itemId;
         private String type;
         private String rarity;
