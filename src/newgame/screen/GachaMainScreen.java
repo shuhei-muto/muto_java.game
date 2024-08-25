@@ -12,7 +12,9 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.Timer;
 
+import newgame.util.GlobalState;
 import newgame.util.KeyManager;
+import newgame.util.Status;
 
 public class GachaMainScreen extends Screen {
 	private Image background;
@@ -34,6 +36,8 @@ public class GachaMainScreen extends Screen {
 	public String name;	//ガチャで取得した名前を入れる
 	public int money;	//ガチャで取得した所持金を入れる
 	private boolean enough = false;
+	public Status status;
+	public String statusText;
 	
 	 
 	@Override
@@ -54,10 +58,20 @@ public class GachaMainScreen extends Screen {
     	images[2] = (BufferedImage) gold_gacha;
     	images[3] = (BufferedImage) battle_button;
     	
-    	
     	name = System.getProperty("name");
     	//PropatyにセットするときはString型のため型変換をする
     	money = Integer.parseInt(System.getProperty("money"));
+    	
+    	// グローバル状態から Status を取得
+        status = GlobalState.currentStatus;
+        //表示用のステータステキストの編集
+        statusText = "【" + name +  "】\n" +
+	                "ＨＰ　：" + status.getHp() + "\n" +
+	                "攻撃力：" + status.getAttack() + "\n" +
+	                "防御力：" + status.getDefense() + "\n" +
+	                "回避　：" + status.getAgility() + "\n" +
+	                "運　　：" + status.getLuck();
+    	
     	
     	
 	}
@@ -149,13 +163,35 @@ public class GachaMainScreen extends Screen {
 		g.drawImage(gold_gacha, 670, 450, 280, 100, null);
 		g.drawImage(silver_gacha, 360, 450, 280, 100, null);
 		g.drawImage(bronze_gacha, 50, 450, 280, 100, null);
-		g.setColor(Color.BLACK);
-		g.setFont(new Font("Serif", Font.PLAIN, 20));
 		
 		//**********ここに所持金を入れる**********************
 		String moneyText = "所持金：$" + money;
 		//*************************************************
-		 
+		g.setColor(Color.GRAY);	//名前が入る四角の部分
+		FontMetrics fm = g.getFontMetrics();	
+		// 文字列の幅を取得
+		int statusWidth = fm.stringWidth("【" + name + "】");
+		g.fillRect(5, 10, 85 + statusWidth, 150);	
+		
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("Serif", Font.PLAIN, 20));
+		
+		// 各行の描画位置を調整
+        int x = 10;
+        int y = 30;
+        int lineHeight = g.getFontMetrics().getHeight(); // 行間の高さ
+
+        // ステータステキストを行ごとに分割
+        String[] lines = statusText.split("\n");
+
+        // 各行を描画
+        for (String line : lines) {
+            g.drawString(line, x, y);
+            y += lineHeight; // 次の行の位置に移動
+        }
+		
+        g.setColor(Color.BLACK);
+		g.setFont(new Font("Serif", Font.PLAIN, 20));
 		g.drawString(moneyText, 720, 60);
         int spacing = 30; // 画像間のスペース
         

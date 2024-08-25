@@ -13,7 +13,9 @@ import javax.swing.Timer;
 
 import newgame.DatabaseConnection;
 import newgame.DatabaseConnection.CharanameResult;
+import newgame.util.GlobalState;
 import newgame.util.KeyManager;
+import newgame.util.Status;
 
 public class NameScreen extends Screen {
 	
@@ -49,6 +51,9 @@ public class NameScreen extends Screen {
                 System.setProperty("name", name);
                 //setPropertyはString型を引数にするためint型から変換をする
                 System.setProperty("money", String.valueOf(money));
+                
+                //ステータスの初期設定(HP,攻撃,防御,回避,運)
+                GlobalState.currentStatus = new Status(10, 5, 3, 4, 2);
                 try {
                     nextScreen.init(); // 次の画面の初期化
                 } catch (IOException e) {
