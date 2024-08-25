@@ -44,26 +44,7 @@ public class GachaScreen extends Screen {
         warrior = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/warrior.gif"));
         first_evo = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/first_evolution.gif"));
         second_evo = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/second_evolution.gif"));
-        //ガチャ番号を取得、gacha()の引数はStringにしている
-        gacha = System.getProperty("gachaNo");
-        gachaResult = DatabaseConnection.gacha(gacha);
-        //ガチャ結果をそれぞれの変数に代入
-    	hp = gachaResult.getHp();
-    	attack = gachaResult.getAttack();
-    	defense = gachaResult.getDefense();
-    	agility = gachaResult.getAgility();
-    	luck = gachaResult.getLuck();
-    	itemRarity = ItemRarity.fromId(Integer.parseInt(gachaResult.getRarity()));
-    	weaponType = WeaponType.fromId(Integer.parseInt(gachaResult.getType()));
-    	
-    	
-    	if(gacha.equals("0")) {
-    		gachaRank = "ブロンズ";
-    	} else if (gacha.equals("1")) {
-    		gachaRank = "シルバー";
-    	} else {
-    		gachaRank = "ゴールド";
-    	}
+        gacha();
     	
 	}
 	
@@ -105,7 +86,7 @@ public class GachaScreen extends Screen {
         
         g.drawString(resultTitle, 500 - resultTitleCenter, 230);
         
-        g.drawString("攻撃力+10", 450, 260);		//ガチャの内容を取得して表示
+        g.drawString("攻撃力+10", 400, 260);		//ガチャの内容を取得して表示
         //ステータス
         g.drawString("【ステータス】", 210, 320);
         g.drawString("ＨＰ　：　+　" + hp, 210, 350);		//ガチャの内容を取得して表示
@@ -152,5 +133,30 @@ public class GachaScreen extends Screen {
 		// 中心位置を計算
 		center = stringWidth / 2;
 		return center;
+	}
+	/* init内で使用される。
+	 * アイテムガチャの結果をまとめている
+	 */
+	public void gacha() {
+		//ガチャ番号を取得、gacha()の引数はStringにしている
+        gacha = System.getProperty("gachaNo");
+        gachaResult = DatabaseConnection.gacha(gacha);
+        //ガチャ結果をそれぞれの変数に代入
+    	hp = gachaResult.getHp();
+    	attack = gachaResult.getAttack();
+    	defense = gachaResult.getDefense();
+    	agility = gachaResult.getAgility();
+    	luck = gachaResult.getLuck();
+    	itemRarity = ItemRarity.fromId(Integer.parseInt(gachaResult.getRarity()));
+    	weaponType = WeaponType.fromId(Integer.parseInt(gachaResult.getType()));
+    	
+    	
+    	if(gacha.equals("0")) {
+    		gachaRank = "ブロンズ";
+    	} else if (gacha.equals("1")) {
+    		gachaRank = "シルバー";
+    	} else {
+    		gachaRank = "ゴールド";
+    	}
 	}
 }

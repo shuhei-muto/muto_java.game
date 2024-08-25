@@ -27,8 +27,8 @@ public class BattleScreen extends Screen {
 	
 	//タイマーによる表示非表示に使用する変数
 	StringBuilder text1 = new StringBuilder();
-	private boolean text = true;
-	private boolean before_battle = false;
+	private boolean wind = true;
+	private boolean battle = false;
 	private boolean BattleScreen = true;
 	
 	//キャラステータスの変数(あとで置き換える)
@@ -41,8 +41,11 @@ public class BattleScreen extends Screen {
 	int d_hp = 200;
 	int d_attack = 50;
 	int d_defense = 30;
-	int d_agility = 50;
-	int d_luck = 50;
+//	int d_agility = 50;
+//	int d_luck = 50;
+	int d_damage;
+	int w_damage;
+	int count = 0;
 	
 	int choice_y = 530;
 	private int currentSele = 0;
@@ -84,20 +87,45 @@ public class BattleScreen extends Screen {
 		        
 		//エンターキーを押された時の画面遷移
 		if (keyManager.isKeyPressed(KeyEvent.VK_ENTER)) {
-			if (currentSele == 0) {
-				battle();
+			if (count == 0) {
+				if(currentSele == 0) {
+					battle();
+					count++;
+				} else if(currentSele == 1) {
+					recovery();
+					count++;
+				}
+			} else {
+				Timer t = new Timer(600, e -> {
+					count = 0;
+				});
+				t.setRepeats(false);
+				t.start();
 			}
-			
-//			BattleScreen = !BattleScreen;
-//			if (!BattleScreen) {
-//				VictoryScreen nextScreen = new VictoryScreen();
-//				try {
-//					nextScreen.init(); // 次の画面の初期化
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//				ScreenManager.getInstance().setScreen(nextScreen);
-//			}
+		}
+		
+		if(d_hp <= 0) {
+			BattleScreen = !BattleScreen;
+			if (!BattleScreen) {
+				VictoryScreen nextScreen = new VictoryScreen();
+				try {
+					nextScreen.init(); // 次の画面の初期化
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				ScreenManager.getInstance().setScreen(nextScreen);
+			}
+		} else if (w_hp <= 0) {
+			BattleScreen = !BattleScreen;
+			if (!BattleScreen) {
+				LoseScreen nextScreen = new LoseScreen();
+				try {
+					nextScreen.init();
+				} catch(IOException e) {
+					e.printStackTrace();
+				}
+				ScreenManager.getInstance().setScreen(nextScreen);
+			}
 		}
 	};
 	
@@ -107,7 +135,7 @@ public class BattleScreen extends Screen {
 		if (background == null) return;
 		
 		//ここに描画するものを入れていく
-		g.drawImage( background, 0, 0, 1000, 700, null);	//int x, int y, int width, int height
+		g.drawImage(background, 0, 0, 1000, 700, null);	//int x, int y, int width, int height
 		g.setColor(Color.WHITE);
 		g.fillRect(100, 500, 600, 150);		//テキストエリア、コマンド等の文章が入る
 		
@@ -123,15 +151,16 @@ public class BattleScreen extends Screen {
         g.setFont(new Font("Serif", Font.PLAIN, 24));
 		
 		//タイマー処理
-		Timer timer = new Timer(2000, e -> {
-			text = false;
-			before_battle = true;
+		Timer display_delay = new Timer(2000, e -> {
+			wind = false;
+			battle = true;
 		});
-		timer.start();
+		display_delay.start();
 		
-		if(text) {
+		//elseは風の音が止んだ後に表示するもの
+		if(wind) {
 			g.drawString("(風の音)", 110, 530);
-		} else if(before_battle) {
+		} else if(battle) {
 			g.setColor(Color.WHITE);
 			g.fillRect(750, 500, 150, 100);		//コマンド選択枠の表示
 			g.drawImage(dragon, 200, 100, 200, 300, null);
@@ -145,27 +174,87 @@ public class BattleScreen extends Screen {
 			g.drawString("攻撃", 790, 530);
 			g.drawString("回復薬", 790, 560);
 		}
-		
-		
 	}
 	
 	public void dispose() {};
 	
 	public void cleanup() {};
 	
-	//バトルのダメージ処理を行う
+	//コマンド「攻撃」を選択時の処理
 	public void battle() {
-		int d_damage = w_attack - d_defense;
-		d_hp = d_hp - d_damage;
+		//クリティカルの確率計算
+		int l = new java.util.Random().nextInt(100);
+		int luck = 100 - w_luck;
 		
-		//時間遅延する処理を入れる
-		int w_damage = d_attack - w_defense;
-		w_hp = w_hp - w_damage;
+		//回避の確率計算
+		int a = new java.util.Random().nextInt(100);
+		int agility = 100 - w_agility;
+		
+		if (w_attack > d_defense) {
+			d_damage = w_attack - d_defense;
+		} else {
+			d_damage = 1;
+		}
+		
+		//クリティカルヒットした時の処理
+		if (luck <= l) {
+			d_damage = d_damage * 2;
+			System.out.println("クリティカルヒット");
+		}
+		d_hp -= d_damage;
+		System.out.println("ドラゴンに" + d_damage + "のダメージ");
+		
+		//戦士のダメージ反映を遅延する処理
+		Timer damage_delay = new Timer(2000, e -> {
+			if (d_attack > w_defense) {
+				w_damage = d_attack - w_defense;
+			} else {
+				w_damage = 1;
+			}
+			
+			//攻撃を回避した時の処理
+			if (agility <= a) {
+				w_damage = 0;
+				System.out.println("ドラゴンの攻撃を避けた");
+			}
+			w_hp -= w_damage;
+			System.out.println("戦士に" + w_damage + "のダメージ");
+		});
+		damage_delay.setRepeats(false);
+		damage_delay.start();
 	};
+	
+	//コマンド「回復薬」を選択時の処理
+	public void recovery() {
+		//回避の確率計算
+		int a = new java.util.Random().nextInt(100);
+		int agility = 100 - w_agility;
+				
+		w_hp = 100;
+		System.out.println("戦士は回復薬を使った！　HP全回復！！");
+		
+		//戦士のダメージ反映を遅延する処理
+		Timer damage_delay = new Timer(2000, e -> {
+			if (d_attack > w_defense) {
+				w_damage = d_attack - w_defense;
+			} else {
+				w_damage = 1;
+			}
+			
+			//攻撃を回避した時の処理
+			if (agility <= a) {
+				w_damage = 0;
+				System.out.println("ドラゴンの攻撃を避けた");
+			}
+			w_hp -= w_damage;
+			System.out.println("戦士に" + w_damage + "のダメージ");
+		});
+		damage_delay.setRepeats(false);
+		damage_delay.start();
+	}
 	
 	// 画像を取得するためのメソッド
 	public Image getImage() {
 		return background;
     }
 }
-

@@ -72,12 +72,12 @@ public class GameStartScreen extends Screen {
         g.setFont(new Font("Serif", Font.PLAIN, 24));
         String fixedText = "管理人：";
         g.drawString(fixedText, x+10, 430);
-        g.drawString(text1.toString(), x+100, 430);
-        g.drawString(text2.toString(), x+100, 460);
-        g.drawString(text3.toString(), x+100, 490);
+        g.drawString(text1.toString(), x+105, 430);
+        g.drawString(text2.toString(), x+105, 460);
+        g.drawString(text3.toString(), x+105, 490);
         
         if (step == 0) {
-        	message1 = "あのモンスターを倒しに行くのか!?";
+        	message1 = "あのモンスターを倒しに行くのか！？";
         	if (count < message1.length()) {
         		text1.append(message1.charAt(count));
         		count++;
@@ -86,7 +86,7 @@ public class GameStartScreen extends Screen {
         		count = 0;
         	}
         } else if(step == 1) {
-        	message2 = "せめて装備だけは備えておけ!";
+        	message2 = "せめて装備だけは備えておけ！";
         	if (count < message2.length()) {
         		text2.append(message2.charAt(count));
         		count++;

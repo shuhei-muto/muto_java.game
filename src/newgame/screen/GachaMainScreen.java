@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.Timer;
 
 import newgame.util.KeyManager;
 
@@ -32,6 +33,8 @@ public class GachaMainScreen extends Screen {
 	private long moveDelay = 300;	//遅延させる時間
 	public String name;	//ガチャで取得した名前を入れる
 	public int money;	//ガチャで取得した所持金を入れる
+	private boolean enough = false;
+	
 	 
 	@Override
 	public void init() throws IOException {
@@ -50,9 +53,13 @@ public class GachaMainScreen extends Screen {
     	images[1] = (BufferedImage) silver_gacha;
     	images[2] = (BufferedImage) gold_gacha;
     	images[3] = (BufferedImage) battle_button;
+    	
+    	
     	name = System.getProperty("name");
     	//PropatyにセットするときはString型のため型変換をする
     	money = Integer.parseInt(System.getProperty("money"));
+    	
+    	
 	}
 
 	public void update() {
@@ -64,12 +71,10 @@ public class GachaMainScreen extends Screen {
         if(currentTime - lastMoveTime > moveDelay) {
         	//左矢印を押したら▲が左に移動(反時計周り)
 	        if (keyManager.isKeyPressed(KeyEvent.VK_LEFT)) {
-	        	if(currentIndex == 3) {
-	        		currentIndex = 0;	// 左矢印キーで左に移動
+	        	if(currentIndex > 0) {
+	        		currentIndex--;	// 左矢印キーで左に移動
 	        	} else if(currentIndex == 0) {
 	        		currentIndex = 3;
-	        	} else {
-	        		currentIndex--;
 	        	}
 	        	lastMoveTime = currentTime;	//最後の移動時間を更新
 	        	System.out.println(currentIndex);
@@ -78,8 +83,9 @@ public class GachaMainScreen extends Screen {
 	        if (keyManager.isKeyPressed(KeyEvent.VK_RIGHT)) {
 	        	if(currentIndex < images.length - 1) {
 	        		currentIndex++;	// 右矢印キーで右に移動
+	        		System.out.println(currentIndex);
 	        	} else if(currentIndex == 3) {
-	        		currentIndex = 2;
+	        		currentIndex = 0;
 	        	}
 	        	lastMoveTime = currentTime;	//最後の移動時間を更新
 	        }
@@ -90,9 +96,21 @@ public class GachaMainScreen extends Screen {
         	gachaMainScreen = !gachaMainScreen;
         	if(currentIndex < 3) {	//ガチャボタン選択時はガチャ画面へ
         		if (!gachaMainScreen) {
-        			handleSelection();
+        			if(!handleSelection()) {//ガチャを回すお金がなかった時
+        				System.out.println("お金が足りないよ");
+        				enough = true;
+        				Timer timer = new Timer(1000, e -> {
+        					enough = false;
+        		        });
+        		        timer.setRepeats(false); // タイマーは一度だけ動作させる
+        		        timer.start();
+        		        
+        				return;
+        			};//選択された画像に対する処理
         			GachaScreen nextScreen = new GachaScreen();
         			System.setProperty("gachaNo", String.valueOf(currentIndex));
+        			//setPropertyはString型を引数にするためint型から変換をする
+                    System.setProperty("money", String.valueOf(money));
         			try {
         				nextScreen.init(); // 次表示する画面の初期化
         			} catch (IOException e) {
@@ -151,6 +169,14 @@ public class GachaMainScreen extends Screen {
         }
         g.setFont(new Font("Serif", Font.BOLD, 24));
         g.drawString("▲", markerX, markerY);
+        
+        if (enough) {
+        	g.setFont(new Font("Serif", Font.PLAIN, 24));
+    		g.setColor(Color.RED);
+        	g.drawString("所持金足りない", 420, 300);
+        } 
+        
+        
 	}
 	 
 	public void dispose() {};
@@ -158,24 +184,45 @@ public class GachaMainScreen extends Screen {
 	public void cleanup() {};
 	
 	// 選択された画像に対する処理
-    private void handleSelection() {
+    private boolean handleSelection() {
+    	boolean result = true;
         System.out.println("選択された画像: " + currentIndex);
         // ここで選択された画像に対する処理を行う
         if(currentIndex == 0) {
         	System.out.println("$10");
+        	if (money >= 10) {
+        		money = money - 10;
+        		System.out.println("ガチャを引いたよ残りの所持金は：" + money);
+        	} else {
+        		result = false;
+        	}
         	//************ここに(所持金 - $10)の計算書く****************
         	
         } else if (currentIndex == 1) {
         	System.out.println("$50");
+        	if (money >= 50) {
+        		money = money - 50;
+        		System.out.println("ガチャを引いたよ残りの所持金は：" + money);
+        	} else {
+        		result = false;
+        	}
         	//************ここに(所持金 - $50)の計算書く****************
         	
         } else if(currentIndex == 2) {
         	System.out.println("$100");
+        	if (money >= 100) {
+        		money = money - 100;
+        		System.out.println("ガチャを引いたよ残りの所持金は：" + money);
+        	} else {
+        		result = false;
+        	}
         	//************ここに(所持金 - $100)の計算書く****************
         	
         } else {
         	System.out.println("バトルへ");
         }
+        
+        return result;
     }
 	
 	// 画像を取得するためのメソッド
