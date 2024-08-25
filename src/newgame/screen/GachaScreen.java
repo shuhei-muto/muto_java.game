@@ -105,10 +105,7 @@ public class GachaScreen extends Screen {
         
         g.drawString(resultTitle, 500 - resultTitleCenter, 230);
         
-        g.drawString("レア度Aの武器が出た！", 360, 230);
         g.drawString("攻撃力+10", 450, 260);		//ガチャの内容を取得して表示
-        g.drawString("攻撃力+10", 400, 260);		//ガチャの内容を取得して表示
-
         //ステータス
         g.drawString("【ステータス】", 210, 320);
         g.drawString("ＨＰ　：　+　" + hp, 210, 350);		//ガチャの内容を取得して表示

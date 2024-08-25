@@ -13,6 +13,7 @@ import javax.swing.*;
 
 public class BattleScreen extends Screen {
 	
+	//画像のローカル変数
 	private Image background;
 	private Image dragon;
 	private Image warrior;
@@ -23,11 +24,28 @@ public class BattleScreen extends Screen {
 	private Image w_normal_attack;
 	private Image w_special_attack;
 	private Image gifImage;
+	
+	//タイマーによる表示非表示に使用する変数
 	StringBuilder text1 = new StringBuilder();
 	private boolean text = true;
 	private boolean before_battle = false;
-	
 	private boolean BattleScreen = true;
+	
+	//キャラステータスの変数(あとで置き換える)
+	int w_hp = 100;
+	int w_attack = 50;
+	int w_defense = 30;
+	int w_agility = 50;
+	int w_luck = 50;
+	
+	int d_hp = 200;
+	int d_attack = 50;
+	int d_defense = 30;
+	int d_agility = 50;
+	int d_luck = 50;
+	
+	int choice_y = 530;
+	private int currentSele = 0;
 	
 	@Override
 	public void init() throws IOException {
@@ -49,19 +67,37 @@ public class BattleScreen extends Screen {
 	public void update() {
 		// KeyManagerインスタンスを取得
 		KeyManager keyManager = KeyManager.getInstance();
+		
+		if (keyManager.isKeyPressed(KeyEvent.VK_UP)) {
+			if (currentSele == 1) {
+				choice_y = 530;
+				currentSele--;
+			}
+		}
+		
+		if (keyManager.isKeyPressed(KeyEvent.VK_DOWN)) {
+			if (currentSele == 0) {
+				choice_y = 560;
+				currentSele++;
+			}
+		}
 		        
 		//エンターキーを押された時の画面遷移
 		if (keyManager.isKeyPressed(KeyEvent.VK_ENTER)) {
-			BattleScreen = !BattleScreen;
-			if (!BattleScreen) {
-				VictoryScreen nextScreen = new VictoryScreen();
-				try {
-					nextScreen.init(); // 次の画面の初期化
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				ScreenManager.getInstance().setScreen(nextScreen);
+			if (currentSele == 0) {
+				battle();
 			}
+			
+//			BattleScreen = !BattleScreen;
+//			if (!BattleScreen) {
+//				VictoryScreen nextScreen = new VictoryScreen();
+//				try {
+//					nextScreen.init(); // 次の画面の初期化
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//				ScreenManager.getInstance().setScreen(nextScreen);
+//			}
 		}
 	};
 	
@@ -101,8 +137,13 @@ public class BattleScreen extends Screen {
 			g.drawImage(dragon, 200, 100, 200, 300, null);
 			g.drawImage(warrior, 650, 250, 150, 150, null);
 			g.setColor(Color.RED);
-			g.fillRect(200, 430, 200, 10);	//ドラゴンのHPゲージ
-			g.fillRect(680, 430, 100, 10);	//戦士のHPゲージ
+			g.fillRect(200, 430, d_hp, 10);	//ドラゴンのHPゲージ
+			g.fillRect(680, 430, w_hp, 10);	//戦士のHPゲージ
+			
+			g.setColor(Color.BLACK);
+			g.drawString("▶", 760, choice_y);
+			g.drawString("攻撃", 790, 530);
+			g.drawString("回復薬", 790, 560);
 		}
 		
 		
@@ -111,6 +152,16 @@ public class BattleScreen extends Screen {
 	public void dispose() {};
 	
 	public void cleanup() {};
+	
+	//バトルのダメージ処理を行う
+	public void battle() {
+		int d_damage = w_attack - d_defense;
+		d_hp = d_hp - d_damage;
+		
+		//時間遅延する処理を入れる
+		int w_damage = d_attack - w_defense;
+		w_hp = w_hp - w_damage;
+	};
 	
 	// 画像を取得するためのメソッド
 	public Image getImage() {
