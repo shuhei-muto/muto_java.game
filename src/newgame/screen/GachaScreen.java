@@ -13,8 +13,11 @@ import javax.swing.Timer;
 
 import newgame.DatabaseConnection;
 import newgame.DatabaseConnection.GachaResult;
+import newgame.util.EquipmentManager;
+import newgame.util.GlobalState;
 import newgame.util.ItemRarity;
 import newgame.util.KeyManager;
+import newgame.util.Status;
 import newgame.util.WeaponType;
 
 public class GachaScreen extends Screen {
@@ -26,6 +29,7 @@ public class GachaScreen extends Screen {
 	private Image second_evo;
 	private boolean gachaScreen = true;
 	private boolean return_screen = false;
+	public String itemName;
 	public int hp;
 	public int attack;
 	public int defense;
@@ -36,6 +40,9 @@ public class GachaScreen extends Screen {
 	public String gachaRank;//引くガチャの名前
 	public ItemRarity itemRarity;//アイテムのレアリティ(R,SR,SSR,UR)
 	public WeaponType weaponType;//アイテムの種類
+	public Status status;
+	public Status getWeaponStatus;
+	public Status weaponStatusNow;
 	@Override
 	public void init() throws IOException {
 		// 背景画像の読み込み
@@ -58,6 +65,13 @@ public class GachaScreen extends Screen {
         	if (!gachaScreen && return_screen) {
                 GachaMainScreen nextScreen = new GachaMainScreen();
                 try {
+                	statusSet();//入手したアイテムをステータスに反映させる
+                	// EquipmentManager のインスタンスを作成
+                	// グローバル状態から EquipmentManager を取得
+                    EquipmentManager manager = GlobalState.equipmentManager;
+                	manager.equipItem(weaponType, getWeaponStatus);
+                    
+                	
                     nextScreen.init(); // 次の画面の初期化
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -81,19 +95,22 @@ public class GachaScreen extends Screen {
         int textCenter = stringCenterX(g, text);
         g.drawString(text, 500 - textCenter, 200);
         
-        String resultTitle = "レア度" + itemRarity +  "の" + weaponType + "が出た！";
+        String resultTitle = "レア度" + itemRarity +  "の" + itemName +"(" +weaponType + ")" + "が出た！";
         int resultTitleCenter = stringCenterX(g, resultTitle);
-        
         g.drawString(resultTitle, 500 - resultTitleCenter, 230);
         
-        g.drawString("攻撃力+10", 400, 260);		//ガチャの内容を取得して表示
+        String statusText = "" + getWeaponStatus;//入手アイテムの内容
+        int statusTextCenter = stringCenterX(g, statusText);
+        
+        g.drawString(statusText, 500 - statusTextCenter, 260);		//ガチャの内容を取得して表示
         //ステータス
+        //mapからnullになっている
         g.drawString("【ステータス】", 210, 320);
-        g.drawString("ＨＰ　：　+　" + hp, 210, 350);		//ガチャの内容を取得して表示
-        g.drawString("攻撃力：　+　" + attack, 210, 380);	//ガチャの内容を取得して表示
-        g.drawString("防御力：　+　" + defense, 210, 410);	//ガチャの内容を取得して表示
-        g.drawString("回避　：　+　" + agility, 210, 440);		//ガチャの内容を取得して表示
-        g.drawString("運　　：　+　" + luck, 210, 470);		//ガチャの内容を取得して表示
+        g.drawString("ＨＰ　："+ (status.getHp() + hp) + hikizan(hp, weaponStatusNow.getHp()) , 210, 350);		//ガチャの内容を取得して表示
+        g.drawString("攻撃力：" + (status.getAttack() + attack) + hikizan(attack, weaponStatusNow.getAttack()), 210, 380);	
+        g.drawString("防御力：" + (status.getDefense() + defense)+ hikizan(defense, weaponStatusNow.getDefense()), 210, 410);	
+        g.drawString("回避　：" + (status.getAgility() + agility)+ hikizan(agility, weaponStatusNow.getAgility()), 210, 440);		//ガチャの内容を取得して表示
+        g.drawString("運　　：" + (status.getLuck() + luck)+ hikizan(luck, weaponStatusNow.getLuck()), 210, 470);		//ガチャの内容を取得して表示
         
         g.drawString("【アイテム】", 450, 320);
         g.drawString("回復薬×", 450, 350);	//×の後にガチャの内容を取得して個数を表示したい
@@ -142,6 +159,7 @@ public class GachaScreen extends Screen {
         gacha = System.getProperty("gachaNo");
         gachaResult = DatabaseConnection.gacha(gacha);
         //ガチャ結果をそれぞれの変数に代入
+        itemName = gachaResult.getItemName();
     	hp = gachaResult.getHp();
     	attack = gachaResult.getAttack();
     	defense = gachaResult.getDefense();
@@ -149,8 +167,6 @@ public class GachaScreen extends Screen {
     	luck = gachaResult.getLuck();
     	itemRarity = ItemRarity.fromId(Integer.parseInt(gachaResult.getRarity()));
     	weaponType = WeaponType.fromId(Integer.parseInt(gachaResult.getType()));
-    	
-    	
     	if(gacha.equals("0")) {
     		gachaRank = "ブロンズ";
     	} else if (gacha.equals("1")) {
@@ -158,5 +174,55 @@ public class GachaScreen extends Screen {
     	} else {
     		gachaRank = "ゴールド";
     	}
+    	
+    	// グローバル状態から 現在の Status を取得
+        status = GlobalState.currentStatus;
+        // ガチャを引いて装備
+        getWeaponStatus = new Status(hp, attack, defense, agility, luck);
+        getWeaponStatus.setItemName(itemName);
+        
+        // グローバル状態から EquipmentManager を取得
+        EquipmentManager manager = GlobalState.equipmentManager;
+        // 現在装備されているアイテムを表示
+        
+        //マップから装備中のものを取得する
+        weaponStatusNow = manager.getEquippedItem(weaponType);
+        if (weaponStatusNow == null) {
+            // 初めて装備する場合、デフォルトのステータスを設定
+            weaponStatusNow = new Status(0, 0, 0, 0, 0); // デフォルトのステータス
+        }
 	}
+	
+
+	/*
+	 * @param a 入手した装備
+	 * @param b 現在装備中のアイテム
+	 * @return String 計算結果
+	 */
+	public static String hikizan(int a, int b) {
+        // aとbの引き算を実行
+        int result = a - b;
+        String xxx = "";
+
+        // 結果をString型に変換し、正の場合には"+"を追加
+        if (result > 0) {
+            return "(+" + result + ")";
+        } else if (result == 0) {
+        	return xxx;
+        } else {
+            return "(" + Integer.toString(result) + ")";
+        }
+    }
+	/*
+	 * ガチャで引いたアイテムを装備し、ステータスを反映させる
+	 * (現在のステータス - 装備中のアイテム + 入手した装備)
+	 */
+	public void statusSet() {
+        status.setHp(status.getHp() - weaponStatusNow.getHp() + hp);
+        status.setAttack(status.getAttack() - weaponStatusNow.getAttack() + attack);
+        status.setDefense(status.getDefense() + weaponStatusNow.getDefense() + defense);
+        status.setAgility(status.getAgility() + weaponStatusNow.getAgility() + agility);
+        status.setLuck(status.getLuck() + weaponStatusNow.getLuck() + luck);
+    }
+	
 }

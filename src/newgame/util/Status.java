@@ -6,6 +6,7 @@ public class Status {
     private int defense;
     private int agility;
     private int luck;
+    private String itemName;
 
     public Status(int hp, int attack, int defense, int agility, int luck) {
         this.hp = hp;
@@ -53,6 +54,14 @@ public class Status {
 
     public void setLuck(int luck) {
         this.luck = luck;
+    }
+    
+    public String getItemName() {
+    	return this.itemName;
+    }
+    
+    public void setItemName(String itemName) {
+    	this.itemName = itemName;
     }
 
     @Override

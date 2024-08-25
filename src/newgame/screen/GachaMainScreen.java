@@ -12,9 +12,11 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.Timer;
 
+import newgame.util.EquipmentManager;
 import newgame.util.GlobalState;
 import newgame.util.KeyManager;
 import newgame.util.Status;
+import newgame.util.WeaponType;
 
 public class GachaMainScreen extends Screen {
 	private Image background;
@@ -38,6 +40,15 @@ public class GachaMainScreen extends Screen {
 	private boolean enough = false;
 	public Status status;
 	public String statusText;
+	public String weaponText;
+	public Status enum0;
+	public Status enum1;
+	public Status enum2;
+	public Status enum3;
+	public Status enum4;
+	public Status enum5;
+	public Status enum6;
+	public Status enum7;
 	
 	 
 	@Override
@@ -64,6 +75,10 @@ public class GachaMainScreen extends Screen {
     	
     	// グローバル状態から Status を取得
         status = GlobalState.currentStatus;
+     // グローバル状態から EquipmentManager を取得
+        EquipmentManager manager = GlobalState.equipmentManager;
+        manager.printEquippedItems();
+        
         //表示用のステータステキストの編集
         statusText = "【" + name +  "】\n" +
 	                "ＨＰ　：" + status.getHp() + "\n" +
@@ -71,8 +86,24 @@ public class GachaMainScreen extends Screen {
 	                "防御力：" + status.getDefense() + "\n" +
 	                "回避　：" + status.getAgility() + "\n" +
 	                "運　　：" + status.getLuck();
-    	
-    	
+        enum0 = Efirst(manager.getEquippedItem(WeaponType.武器)); 
+        enum1 = Efirst(manager.getEquippedItem(WeaponType.鎧));
+        enum2 = Efirst(manager.getEquippedItem(WeaponType.盾));
+        enum3 = Efirst(manager.getEquippedItem(WeaponType.ブーツ));
+        enum4 = Efirst(manager.getEquippedItem(WeaponType.アクセサリー));
+        enum5 = Efirst(manager.getEquippedItem(WeaponType.永続ステ上げアイテム));
+        enum6 = Efirst(manager.getEquippedItem(WeaponType.回復アイテム));
+        enum7 = Efirst(manager.getEquippedItem(WeaponType.進化アイテム));
+        
+        weaponText = "【装備】\n" +
+                "武器　：" +  enum0.getItemName() + "\n" +
+                "鎧　　：" + enum1.getItemName() + "\n" +
+                "盾　　：" + enum2.getItemName() + "\n" +
+                "ブーツ：" + enum3.getItemName() + "\n" +
+                "アクセ：" + enum4.getItemName() + "\n" +
+                "ステ上：" + enum5.getItemName() + "\n" +
+                "回復　：" + enum6.getItemName() + "\n" +
+                "進化　：" + enum7.getItemName();
     	
 	}
 
@@ -172,6 +203,7 @@ public class GachaMainScreen extends Screen {
 		// 文字列の幅を取得
 		int statusWidth = fm.stringWidth("【" + name + "】");
 		g.fillRect(5, 10, 85 + statusWidth, 150);	
+		g.fillRect(85 + statusWidth, 10, 200, 225);	
 		
 		g.setColor(Color.WHITE);
 		g.setFont(new Font("Serif", Font.PLAIN, 20));
@@ -183,11 +215,19 @@ public class GachaMainScreen extends Screen {
 
         // ステータステキストを行ごとに分割
         String[] lines = statusText.split("\n");
+        String[] lines2 = weaponText.split("\n");
 
         // 各行を描画
         for (String line : lines) {
             g.drawString(line, x, y);
             y += lineHeight; // 次の行の位置に移動
+        }
+        
+        int x2 = 85 + statusWidth;
+        int y2 = 30;
+        for (String line2 : lines2) {
+            g.drawString(line2, x2, y2);
+            y2 += lineHeight; // 次の行の位置に移動
         }
 		
         g.setColor(Color.BLACK);
@@ -281,5 +321,15 @@ public class GachaMainScreen extends Screen {
 		// 中心位置を計算
 		center = stringWidth / 2;
 		return center;
+	}
+	
+	public Status Efirst (Status em) {
+		if (em == null) {
+            // 初めて装備する場合、デフォルトのステータスを設定
+        	em = new Status(0, 0, 0, 0, 0); // デフォルトのステータス
+        }
+		
+		return em;
+		
 	}
 }
