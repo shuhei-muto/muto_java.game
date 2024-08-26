@@ -48,7 +48,7 @@ public class MainCanvas extends Canvas implements Runnable {
 	    public void run() {
 	        
 	        long lastTime = System.nanoTime();
-	        double amountOfTicks = 30.0;
+	        double amountOfTicks = 30.0;	//1秒間に30回更新
 	        double ns = 1000000000 / amountOfTicks;
 	        double delta = 0;
 	        while (running) {
@@ -60,6 +60,13 @@ public class MainCanvas extends Canvas implements Runnable {
 	                delta--;
 	            }
 	            draw();
+	            
+	            // スリープを追加してループの速度を遅くする
+//	            try {
+//	                Thread.sleep(50); // 100ミリ秒スリープ (0.1秒)
+//	            } catch (InterruptedException e) {
+//	                e.printStackTrace();
+//	            }
 	        }
 	        stop();
 	    }

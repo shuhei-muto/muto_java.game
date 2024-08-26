@@ -163,6 +163,7 @@ public class GachaMainScreen extends Screen {
 		g.drawImage(gold_gacha, 670, 450, 280, 100, null);
 		g.drawImage(silver_gacha, 360, 450, 280, 100, null);
 		g.drawImage(bronze_gacha, 50, 450, 280, 100, null);
+		System.out.println("1");
 		
 		//**********ここに所持金を入れる**********************
 		String moneyText = "所持金：$" + money;

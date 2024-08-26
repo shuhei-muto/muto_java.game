@@ -45,7 +45,11 @@ public class BattleScreen extends Screen {
 //	int d_luck = 50;
 	int d_damage;
 	int w_damage;
-	int count = 0;
+	int count = 0; //コマンドの連続押下防止用
+	private int textCount = 0;
+	private String message;
+	StringBuilder text = new StringBuilder();
+	int step = 0;
 	
 	int choice_y = 530;
 	private int currentSele = 0;
@@ -151,15 +155,30 @@ public class BattleScreen extends Screen {
         g.setFont(new Font("Serif", Font.PLAIN, 24));
 		
 		//タイマー処理
-		Timer display_delay = new Timer(2000, e -> {
+		Timer display_delay = new Timer(3000, e -> {
 			wind = false;
 			battle = true;
 		});
 		display_delay.start();
+
 		
 		//elseは風の音が止んだ後に表示するもの
-		if(wind) {
+		if (wind) {
 			g.drawString("(風の音)", 110, 530);
+			g.drawString(text.toString(), 110, 560);
+			System.out.println(text);
+			if (step == 0) {
+				message = "不気味な静寂が辺りを包む……";
+				if (textCount < message.length()) {
+					text.append(message.charAt(textCount));
+					textCount++;
+				} else {
+					step++;
+					textCount = 0;
+				}
+			} else {
+				return;
+			}
 		} else if(battle) {
 			g.setColor(Color.WHITE);
 			g.fillRect(750, 500, 150, 100);		//コマンド選択枠の表示
@@ -173,6 +192,7 @@ public class BattleScreen extends Screen {
 			g.drawString("▶", 760, choice_y);
 			g.drawString("攻撃", 790, 530);
 			g.drawString("回復薬", 790, 560);
+			g.drawString("ドラゴンが現れた！", 110, 530);
 		}
 	}
 	

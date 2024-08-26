@@ -75,6 +75,7 @@ public class GameStartScreen extends Screen {
         g.drawString(text1.toString(), x+105, 430);
         g.drawString(text2.toString(), x+105, 460);
         g.drawString(text3.toString(), x+105, 490);
+        System.out.println(text1);
         
         if (step == 0) {
         	message1 = "あのモンスターを倒しに行くのか！？";
