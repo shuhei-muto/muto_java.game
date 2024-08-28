@@ -53,7 +53,7 @@ public class NameScreen extends Screen {
                 System.setProperty("money", String.valueOf(money));
                 
                 //ステータスの初期設定(HP,攻撃,防御,回避,運)
-                GlobalState.currentStatus = new Status(10, 5, 3, 4, 2);
+                GlobalState.currentStatus = new Status(10, 5, 3, 4, 2, 0, 0, 0);
                 try {
                     nextScreen.init(); // 次の画面の初期化
                 } catch (IOException e) {

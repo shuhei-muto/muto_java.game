@@ -157,7 +157,6 @@ public class DatabaseConnection {
 
             // データベースに接続
             try (Connection conn = DriverManager.getConnection(url)) {
-                System.out.println("SQLiteデータベースに接続しました。");
 
                 // ブロンズガチャを引いた時
                 Random random = new Random();
@@ -215,7 +214,6 @@ public class DatabaseConnection {
 
             // データベースに接続
             try (Connection conn = DriverManager.getConnection(url)) {
-                System.out.println("SQLiteデータベースに接続しました。");
 
                 // charaname テーブルからランダムな1行を取得
                 // ORDER BY RANDOM()でランダムに並び替え、LIMIT 1で最初の1件のみ取得
@@ -239,40 +237,5 @@ public class DatabaseConnection {
         return result;
     }
 
-    /* 単体確認用のmainメソッド,
-     * 確認のために金銀銅全て記載
-     * キャラ名も１つ取得して表示するようにした
-     * 実際にしようするときはmainクラスは必要ない
-     */
-//    public static void main(String[] args) {
-//        System.out.println("銅ガチャを引いています...");
-//        // 例: 銅ガチャ（ガチャ種類 0）を引く
-//        String a  = "0";
-//        GachaResult result0 = gacha(a);
-//        if (result0 != null) {
-//            // result0のtoString()メソッドを呼ぶ
-//            System.out.println("銅ガチャの結果: \n"  + result0);
-//            //.get◯◯◯で値を表示できる。（GachaResultクラスで定義している）
-//            System.out.println("指定した項目を表示する場合：" + result0.getItemName());
-//        } else {
-//            System.out.println("何も当たりませんでした。");
-//        }
-//
-//
-//        System.out.println("");
-//
-//        System.out.println("ランダムキャラクターを取得しています...");
-//        // charanameテーブルからランダムな1行を取得
-//        CharanameResult charanameResult = charaname();
-//        if (charanameResult != null) {
-//            // charanameResultのtoString()メソッドを呼ぶ
-//            System.out.println("ランダムキャラクターの結果: \n" + charanameResult);
-//        } else {
-//            System.out.println("データの取得に失敗しました。");
-//        }
-//        //getName getMoneyで名前,所持金を表示できる。
-//        System.out.println(charanameResult.getName());
-//        System.out.println(charanameResult.getMoney());
-//    }
 }
 

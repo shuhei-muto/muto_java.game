@@ -91,9 +91,8 @@ public class GachaMainScreen extends Screen {
         enum2 = Efirst(manager.getEquippedItem(WeaponType.盾));
         enum3 = Efirst(manager.getEquippedItem(WeaponType.ブーツ));
         enum4 = Efirst(manager.getEquippedItem(WeaponType.アクセサリー));
-        enum5 = Efirst(manager.getEquippedItem(WeaponType.永続ステ上げアイテム));
+        enum5 = Efirst(manager.getEquippedItem(WeaponType.ステ上げアイテム));
         enum6 = Efirst(manager.getEquippedItem(WeaponType.回復アイテム));
-        enum7 = Efirst(manager.getEquippedItem(WeaponType.進化アイテム));
         
         weaponText = "【装備】\n" +
                 "武器　：" +  enum0.getItemName() + "\n" +
@@ -101,9 +100,9 @@ public class GachaMainScreen extends Screen {
                 "盾　　：" + enum2.getItemName() + "\n" +
                 "ブーツ：" + enum3.getItemName() + "\n" +
                 "アクセ：" + enum4.getItemName() + "\n" +
-                "ステ上：" + enum5.getItemName() + "\n" +
+                "ステ上：" + status.getStatusUPCount() + "回" + "\n" +
                 "回復　：" + enum6.getItemName() + "\n" +
-                "進化　：" + enum7.getItemName();
+                "ランク：" + "素人冒険者";
     	
 	}
 

@@ -43,6 +43,7 @@ public class GachaScreen extends Screen {
 	public Status status;
 	public Status getWeaponStatus;
 	public Status weaponStatusNow;
+	public Status now_status;
 	@Override
 	public void init() throws IOException {
 		// 背景画像の読み込み
@@ -106,14 +107,14 @@ public class GachaScreen extends Screen {
         //ステータス
         //mapからnullになっている
         g.drawString("【ステータス】", 210, 320);
-        g.drawString("ＨＰ　："+ (status.getHp() + hp) + hikizan(hp, weaponStatusNow.getHp()) , 210, 350);		//ガチャの内容を取得して表示
-        g.drawString("攻撃力：" + (status.getAttack() + attack) + hikizan(attack, weaponStatusNow.getAttack()), 210, 380);	
-        g.drawString("防御力：" + (status.getDefense() + defense)+ hikizan(defense, weaponStatusNow.getDefense()), 210, 410);	
-        g.drawString("回避　：" + (status.getAgility() + agility)+ hikizan(agility, weaponStatusNow.getAgility()), 210, 440);		//ガチャの内容を取得して表示
-        g.drawString("運　　：" + (status.getLuck() + luck)+ hikizan(luck, weaponStatusNow.getLuck()), 210, 470);		//ガチャの内容を取得して表示
+        g.drawString("ＨＰ　："+ (status.getHp() + hp) + hikizan((status.getHp() + hp), (status.getHp() + weaponStatusNow.getHp())) , 210, 350);		//ガチャの内容を取得して表示
+        g.drawString("攻撃力：" + (status.getAttack() + attack) + hikizan((status.getAttack() + attack), (status.getAttack() + weaponStatusNow.getAttack())), 210, 380);	
+        g.drawString("防御力：" + (status.getDefense() + defense)+ hikizan((status.getDefense() + defense), (status.getDefense() + weaponStatusNow.getDefense())), 210, 410);	
+        g.drawString("回避　：" + (status.getAgility() + agility)+ hikizan((status.getAgility() + agility), (status.getAgility() + weaponStatusNow.getAgility())), 210, 440);		//ガチャの内容を取得して表示
+        g.drawString("運　　：" + (status.getLuck() + luck)+ hikizan((status.getLuck() + luck), status.getLuck() + weaponStatusNow.getLuck()), 210, 470);		//ガチャの内容を取得して表示
         
         g.drawString("【アイテム】", 450, 320);
-        g.drawString("回復薬×", 450, 350);	//×の後にガチャの内容を取得して個数を表示したい
+        g.drawString("回復薬×" + potionCC() + potionPlus(), 450, 350);	//×の後にガチャの内容を取得して個数を表示したい
         
         //2秒経ってから「ガチャへ戻る」ボタンを表示
         Timer timer = new Timer(2000, e -> {
@@ -177,6 +178,7 @@ public class GachaScreen extends Screen {
     	
     	// グローバル状態から 現在の Status を取得
         status = GlobalState.currentStatus;
+        now_status = status;
         // ガチャを引いて装備
         getWeaponStatus = new Status(hp, attack, defense, agility, luck);
         getWeaponStatus.setItemName(itemName);
@@ -218,11 +220,42 @@ public class GachaScreen extends Screen {
 	 * (現在のステータス - 装備中のアイテム + 入手した装備)
 	 */
 	public void statusSet() {
-        status.setHp(status.getHp() - weaponStatusNow.getHp() + hp);
-        status.setAttack(status.getAttack() - weaponStatusNow.getAttack() + attack);
-        status.setDefense(status.getDefense() + weaponStatusNow.getDefense() + defense);
-        status.setAgility(status.getAgility() + weaponStatusNow.getAgility() + agility);
-        status.setLuck(status.getLuck() + weaponStatusNow.getLuck() + luck);
+		if (weaponType.equals(WeaponType.ステ上げアイテム)) {
+			//永続ステ上げの場合加算していく
+			status.setHp(status.getHp()+ hp);
+            status.setAttack(status.getAttack() + attack);
+            status.setDefense(status.getDefense() + defense);
+            status.setAgility(status.getAgility() + agility);
+            status.setLuck(status.getLuck() + luck);
+            status.setStatusUpCount(status.getStatusUPCount()+1);
+            
+        }  else if (weaponType.equals(WeaponType.回復アイテム)) {
+        	status.setHp(status.getHp() - weaponStatusNow.getHp() + hp);//HP加算していく？
+        	status.setPotionCount(status.getPotionCount() + 1);
+        } else {
+        	//そのほかの装備
+        	status.setHp(status.getHp() - weaponStatusNow.getHp() + hp);
+            status.setAttack(status.getAttack() - weaponStatusNow.getAttack() + attack);
+            status.setDefense(status.getDefense() - weaponStatusNow.getDefense() + defense);
+            status.setAgility(status.getAgility() - weaponStatusNow.getAgility() + agility);
+            status.setLuck(status.getLuck() - weaponStatusNow.getLuck() + luck);
+        }
+        
     }
+	
+	public String potionCC() {
+		int potion = status.getPotionCount();
+		if(weaponType.equals(WeaponType.回復アイテム)) {
+			potion = potion+1;
+		}
+		return Integer.toString(potion) ;
+	}
+	public String potionPlus() {
+		String xxx = "";
+		if (weaponType.equals(WeaponType.回復アイテム)) {
+            return "(+1)";
+        } 
+		return xxx;
+	}
 	
 }
