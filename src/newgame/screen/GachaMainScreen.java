@@ -75,9 +75,22 @@ public class GachaMainScreen extends Screen {
     	
     	// グローバル状態から Status を取得
         status = GlobalState.currentStatus;
-     // グローバル状態から EquipmentManager を取得
+        // グローバル状態から EquipmentManager を取得
         EquipmentManager manager = GlobalState.equipmentManager;
-        manager.printEquippedItems();
+        //manager.printEquippedItems(); 装備中のアイテムをコンソールに表示
+        int Rank = status.getEvolitionCount();
+        String RankText ;
+        if(Rank == 1) {
+        	RankText = "見習い";
+        } else if (Rank == 2) {
+        	RankText = "上級冒険者";
+        } else if (Rank == 3) {
+        	RankText = "達人";
+        } else {
+        	RankText = "null";
+        }
+        
+        
         
         //表示用のステータステキストの編集
         statusText = "【" + name +  "】\n" +
@@ -102,7 +115,7 @@ public class GachaMainScreen extends Screen {
                 "アクセ：" + enum4.getItemName() + "\n" +
                 "ステ上：" + status.getStatusUPCount() + "回" + "\n" +
                 "回復　：" + enum6.getItemName() + "\n" +
-                "ランク：" + "素人冒険者";
+                "ランク：" + RankText;
     	
 	}
 
@@ -203,7 +216,7 @@ public class GachaMainScreen extends Screen {
 		// 文字列の幅を取得
 		int statusWidth = fm.stringWidth("【" + name + "】");
 		g.fillRect(5, 10, 85 + statusWidth, 150);	
-		g.fillRect(85 + statusWidth, 10, 200, 225);	
+		g.fillRect(85 + statusWidth, 10, 250, 225);	
 		
 		g.setColor(Color.WHITE);
 		g.setFont(new Font("Serif", Font.PLAIN, 20));

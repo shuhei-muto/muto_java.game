@@ -44,6 +44,9 @@ public class GachaScreen extends Screen {
 	public Status getWeaponStatus;
 	public Status weaponStatusNow;
 	public Status now_status;
+	public int evo;
+	public int old_evo;
+	public int XevoX;
 	@Override
 	public void init() throws IOException {
 		// 背景画像の読み込み
@@ -52,7 +55,7 @@ public class GachaScreen extends Screen {
         warrior = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/warrior.gif"));
         first_evo = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/first_evolution.gif"));
         second_evo = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/second_evolution.gif"));
-        gacha();
+        gacha();//ガチャを引く
     	
 	}
 	
@@ -70,7 +73,7 @@ public class GachaScreen extends Screen {
                 	// EquipmentManager のインスタンスを作成
                 	// グローバル状態から EquipmentManager を取得
                     EquipmentManager manager = GlobalState.equipmentManager;
-                	manager.equipItem(weaponType, getWeaponStatus);
+                	manager.equipItem(weaponType, getWeaponStatus); 
                     
                 	
                     nextScreen.init(); // 次の画面の初期化
@@ -107,14 +110,27 @@ public class GachaScreen extends Screen {
         //ステータス
         //mapからnullになっている
         g.drawString("【ステータス】", 210, 320);
-        g.drawString("ＨＰ　："+ (status.getHp() + hp) + hikizan((status.getHp() + hp), (status.getHp() + weaponStatusNow.getHp())) , 210, 350);		//ガチャの内容を取得して表示
-        g.drawString("攻撃力：" + (status.getAttack() + attack) + hikizan((status.getAttack() + attack), (status.getAttack() + weaponStatusNow.getAttack())), 210, 380);	
-        g.drawString("防御力：" + (status.getDefense() + defense)+ hikizan((status.getDefense() + defense), (status.getDefense() + weaponStatusNow.getDefense())), 210, 410);	
-        g.drawString("回避　：" + (status.getAgility() + agility)+ hikizan((status.getAgility() + agility), (status.getAgility() + weaponStatusNow.getAgility())), 210, 440);		//ガチャの内容を取得して表示
-        g.drawString("運　　：" + (status.getLuck() + luck)+ hikizan((status.getLuck() + luck), status.getLuck() + weaponStatusNow.getLuck()), 210, 470);		//ガチャの内容を取得して表示
+        g.drawString("ＨＰ　：" + ((status.getHp()      + hp)      * XevoX) + hikizan(((status.getHp()      + hp)      * XevoX), (status.getHp()      + weaponStatusNow.getHp())      ), 210, 350);	
+        g.drawString("攻撃力：" + ((status.getAttack()  + attack)  * XevoX) + hikizan(((status.getAttack()  + attack)  * XevoX), (status.getAttack()  + weaponStatusNow.getAttack())  ), 210, 380);	
+        g.drawString("防御力：" + ((status.getDefense() + defense) * XevoX) + hikizan(((status.getDefense() + defense) * XevoX), (status.getDefense() + weaponStatusNow.getDefense()) ), 210, 410);	
+        g.drawString("回避　：" + ((status.getAgility() + agility) * XevoX) + hikizan(((status.getAgility() + agility) * XevoX), (status.getAgility() + weaponStatusNow.getAgility()) ), 210, 440);	
+        g.drawString("運　　：" + ((status.getLuck()    + luck)    * XevoX) + hikizan(((status.getLuck()    + luck)    * XevoX), (status.getLuck()    + weaponStatusNow.getLuck())    ), 210, 470);	
         
         g.drawString("【アイテム】", 450, 320);
         g.drawString("回復薬×" + potionCC() + potionPlus(), 450, 350);	//×の後にガチャの内容を取得して個数を表示したい
+        
+        if(weaponType.equals(WeaponType.進化アイテム)) {
+        	if(evo == 1) {
+        		g.drawImage(warrior,   450, 480, 50, 50, null);
+        		g.drawImage(first_evo, 550, 380, 150, 150, null);//int x, int y, int width, int height
+        	} else if (evo == 2) {
+        		g.drawImage(first_evo ,   450, 480, 50, 50, null);
+        		g.drawImage(second_evo, 550, 380, 150, 150, null);
+        	} else {
+        		System.out.println("これ以上進化しないよ");
+        	}
+        }
+        
         
         //2秒経ってから「ガチャへ戻る」ボタンを表示
         Timer timer = new Timer(2000, e -> {
@@ -165,7 +181,7 @@ public class GachaScreen extends Screen {
     	attack = gachaResult.getAttack();
     	defense = gachaResult.getDefense();
     	agility = gachaResult.getAgility();
-    	luck = gachaResult.getLuck();
+    	luck = gachaResult.getLuck(); 
     	itemRarity = ItemRarity.fromId(Integer.parseInt(gachaResult.getRarity()));
     	weaponType = WeaponType.fromId(Integer.parseInt(gachaResult.getType()));
     	if(gacha.equals("0")) {
@@ -179,6 +195,19 @@ public class GachaScreen extends Screen {
     	// グローバル状態から 現在の Status を取得
         status = GlobalState.currentStatus;
         now_status = status;
+        evo = status.getEvolitionCount();
+        XevoX = 1;
+        old_evo = status.getEvolitionCount();
+        //進化アイテム入手時
+        if(weaponType.equals(WeaponType.進化アイテム)) {
+        	if (evo == 1) {
+        		XevoX =  2;
+        	} else if (evo == 2) {
+        		XevoX =  3;
+        	} else {
+        		System.out.println("最終進化しているよ");
+        	}
+        }
         // ガチャを引いて装備
         getWeaponStatus = new Status(hp, attack, defense, agility, luck);
         getWeaponStatus.setItemName(itemName);
@@ -232,6 +261,31 @@ public class GachaScreen extends Screen {
         }  else if (weaponType.equals(WeaponType.回復アイテム)) {
         	status.setHp(status.getHp() - weaponStatusNow.getHp() + hp);//HP加算していく？
         	status.setPotionCount(status.getPotionCount() + 1);
+        } else if (weaponType.equals(WeaponType.進化アイテム)) {
+        	//ここでステータスを倍々にしていくと表示の際も倍になりおかしくなる
+        	//進化１回目
+        	System.out.println("進化したね");
+            if(status.getEvolitionCount() == 1) {
+            	System.out.println(XevoX + "倍になる");
+            	status.setHp(status.getHp() * XevoX);
+                status.setAttack(status.getAttack() * XevoX);
+                status.setDefense(status.getDefense() * XevoX);
+                status.setAgility(status.getAgility() * XevoX);
+                status.setLuck(status.getLuck() * XevoX);
+            	status.setevolutionCount(status.getEvolitionCount() * 2);
+            } else if(status.getEvolitionCount() == 2) {
+            	//進化２回目
+            	System.out.println(evo + "=evo ２回目の進化。");
+            	status.setHp(status.getHp() * XevoX);
+                status.setAttack(status.getAttack() * XevoX);
+                status.setDefense(status.getDefense() * XevoX);
+                status.setAgility(status.getAgility() * XevoX);
+                status.setLuck(status.getLuck() * XevoX);
+            	status.setevolutionCount(status.getEvolitionCount() + 1);
+            } else {
+            	System.out.println("最終進化してるね");
+            }
+           
         } else {
         	//そのほかの装備
         	status.setHp(status.getHp() - weaponStatusNow.getHp() + hp);

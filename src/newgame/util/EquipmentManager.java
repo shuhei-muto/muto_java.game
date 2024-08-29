@@ -17,18 +17,18 @@ public class EquipmentManager {
     public void equipItem(WeaponType type, Status newStatus) {
         Status oldStatus = equipmentMap.get(type);
         
-
-        if (oldStatus != null) {
-            System.out.println(type + " を上書き装備します。");
-            System.out.println("以前のステータス: " + oldStatus);
-            System.out.println("新しいステータス: " + newStatus);
-            System.out.println("ステータスの変化: HP " + (newStatus.getHp() - oldStatus.getHp()) +
-                               ", Attack " + (newStatus.getAttack() - oldStatus.getAttack()) +
-                               ", Defense " + (newStatus.getDefense() - oldStatus.getDefense()));
-        } else {
-            System.out.println(type + " を新たに装備します。");
-            System.out.println("新しいステータス: " + newStatus);
-        }
+          //コンソールに表示する
+//        if (oldStatus != null) {
+//            System.out.println(type + " を上書き装備します。");
+//            System.out.println("以前のステータス: " + oldStatus);
+//            System.out.println("新しいステータス: " + newStatus);
+//            System.out.println("ステータスの変化: HP " + (newStatus.getHp() - oldStatus.getHp()) +
+//                               ", Attack " + (newStatus.getAttack() - oldStatus.getAttack()) +
+//                               ", Defense " + (newStatus.getDefense() - oldStatus.getDefense()));
+//        } else {
+//            System.out.println(type + " を新たに装備します。");
+//            System.out.println("新しいステータス: " + newStatus);
+//        }
 
         equipmentMap.put(type, newStatus);
     }
