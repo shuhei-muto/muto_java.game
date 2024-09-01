@@ -17,6 +17,8 @@ import newgame.util.GlobalState;
 import newgame.util.KeyManager;
 import newgame.util.Status;
 
+import newgame.bgm.Bgm;
+
 public class NameScreen extends Screen {
 	
 	private Image background;
@@ -27,6 +29,8 @@ public class NameScreen extends Screen {
 	private boolean nameScreen = true;
 	private boolean text = true;
 	private boolean button = false;
+	private Bgm bgm;
+	
 	
 	@Override
 	public void init() throws IOException {
@@ -37,6 +41,15 @@ public class NameScreen extends Screen {
         CharanameResult charaResult = DatabaseConnection.charaname();
 		name = charaResult.getName();	//ガチャで回した後に変数nameに名前が入る
 		money = charaResult.getMoney();
+		
+		
+		bgm = new Bgm();	//Bgmインスタンスを作成
+		try {
+			bgm.namescreen();	//BGMを再生
+		} catch (Exception e) {
+			System.out.println("例外が発生しました。");
+			System.out.println(e);
+		}
 		
 	}
 	
@@ -60,6 +73,7 @@ public class NameScreen extends Screen {
                     e.printStackTrace();
                 }
                 ScreenManager.getInstance().setScreen(nextScreen);
+                bgm.stop();	//クラスフィールドbgmでstopを呼び出す
             }
         }
 	};

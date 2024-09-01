@@ -6,8 +6,13 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
 import java.io.IOException;
 import newgame.util.KeyManager;
+import newgame.bgm.Bgm;
+
+import javax.swing.*;
 
 
 public class GameStartScreen extends Screen {
@@ -25,12 +30,30 @@ public class GameStartScreen extends Screen {
 	StringBuilder text1 = new StringBuilder();
 	StringBuilder text2 = new StringBuilder();
 	StringBuilder text3 = new StringBuilder();
+	private Bgm bgm;
+	
+	private Image d_normal_attack;
+	private Image gifImage;
+	private Icon gifIcon;
 	
 	@Override
 	public void init() throws IOException {
 		// 背景画像とその他の画像読み込み
 		background = ImageIO.read(getClass().getClassLoader().getResource("res/img/backimage/start.jpg"));
 		administrator = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/administrator.png"));
+		
+		d_normal_attack = ImageIO.read(getClass().getClassLoader().getResource("res/img/effect/D_Normal_attack.gif"));
+		String gifPath = "src/res/img/effect/D_Normal_attack.gif";
+        gifIcon = new ImageIcon(gifPath);
+        
+		
+		bgm = new Bgm();	//Bgmインスタンスを作成
+        try {
+        	bgm.gamestart();	//BGMを再生
+        } catch(Exception e) {
+        	System.out.println("例外が発生しました。");
+            System.out.println(e);
+        }
 	}
 
 	public void update() {
@@ -48,10 +71,9 @@ public class GameStartScreen extends Screen {
                     e.printStackTrace();
                 }
                 ScreenManager.getInstance().setScreen(nextScreen);
+                bgm.stop();	//クラスフィールドbgmでstopを呼び出す
             }
         }
-        
-        
 	};
 
 	@Override
@@ -60,10 +82,18 @@ public class GameStartScreen extends Screen {
 		if (background == null) return;
 		
 		//ここに描画するものを入れていく
-		g.drawImage( background, 0, 0, 1000, 700, null);	//int x, int y, int width, int height
+		g.drawImage(background, 0, 0, 1000, 700, null);	//int x, int y, int width, int height
     	Image scaledAdministrator = administrator.getScaledInstance(400, 400, Image.SCALE_SMOOTH);
     	int centerX = (1000 - scaledAdministrator.getWidth(null)) / 2 ;
     	g.drawImage(scaledAdministrator, centerX, 150, null);
+    	
+    	// GIFアイコンを描画
+//        if (gifIcon != null) {
+//            // GIFアイコンを描画する位置を指定 (例: x = 100, y = 100)
+//            gifIcon.paintIcon(null, g, 100, 100);  // `null` の代わりに `JComponent`を指定しても良いです。
+//        }
+    	
+    	
     	
     	g.setColor(Color.WHITE);
     	int x = (1000 - 700) / 2;
@@ -75,7 +105,6 @@ public class GameStartScreen extends Screen {
         g.drawString(text1.toString(), x+105, 430);
         g.drawString(text2.toString(), x+105, 460);
         g.drawString(text3.toString(), x+105, 490);
-        System.out.println(text1);
         
         if (step == 0) {
         	message1 = "あのモンスターを倒しに行くのか！？";
@@ -107,8 +136,6 @@ public class GameStartScreen extends Screen {
         } else {
         	return;
         }
-        
-		
 	};
 
 	public void dispose() {};

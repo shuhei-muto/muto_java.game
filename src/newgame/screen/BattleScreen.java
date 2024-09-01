@@ -8,8 +8,13 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import newgame.util.KeyManager;
-import javax.swing.Timer;
+
 import javax.swing.*;
+import newgame.bgm.Bgm;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import newgame.util.Status;
+import newgame.util.GlobalState;
 
 public class BattleScreen extends Screen {
 	
@@ -19,24 +24,23 @@ public class BattleScreen extends Screen {
 	private Image warrior;
 	private Image w_first_evolution;
 	private Image w_second_evolution;
-	private Image d_normal_attack;
-	private Image flame;
-	private Image w_normal_attack;
-	private Image w_special_attack;
-	private Image gifImage;
+	private Icon d_normal_attack;
+	private Icon flame;
+	private Icon w_normal_attack;
+	private Icon w_special_attack;
+	private Icon gifImage;
 	
 	//タイマーによる表示非表示に使用する変数
 	StringBuilder text1 = new StringBuilder();
-	private boolean wind = true;
 	private boolean battle = false;
 	private boolean BattleScreen = true;
 	
 	//キャラステータスの変数(あとで置き換える)
-	int w_hp = 100;
-	int w_attack = 50;
-	int w_defense = 30;
-	int w_agility = 50;
-	int w_luck = 50;
+	int w_hp;
+	int w_attack;
+	int w_defense;
+	int w_agility;
+	int w_luck;
 	
 	int d_hp = 200;
 	int d_attack = 50;
@@ -53,6 +57,13 @@ public class BattleScreen extends Screen {
 	
 	int choice_y = 530;
 	private int currentSele = 0;
+	private Status status;
+	
+	//BGM
+	private Bgm bgm;
+	private Bgm wind;
+//	private BattleBgm bgm;
+	
 	
 	@Override
 	public void init() throws IOException {
@@ -62,13 +73,55 @@ public class BattleScreen extends Screen {
 		warrior = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/warrior.gif"));
 		w_first_evolution = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/first_evolution.gif"));
 		w_second_evolution = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/second_evolution.gif"));
-		d_normal_attack = ImageIO.read(getClass().getClassLoader().getResource("res/img/effect/D_Normal_attack.gif"));
-		flame = ImageIO.read(getClass().getClassLoader().getResource("res/img/effect/flame.gif"));
-		w_normal_attack = ImageIO.read(getClass().getClassLoader().getResource("res/img/effect/W_Normal_attack.gif"));
-		w_special_attack = ImageIO.read(getClass().getClassLoader().getResource("res/img/effect/Special_attack.gif"));
-        String gifPath = "res/img/effect/W_Normal_attack.gif";
-        ImageIcon gifIcon = new ImageIcon(gifPath);
-        gifImage = gifIcon.getImage();
+		
+		String d_attackPath = "src/res/img/effect/D_Normal_attack.gif";
+		d_normal_attack = new ImageIcon(d_attackPath);
+		String flamePath = "src/res/img/effect/flame.gif";
+		flame = new ImageIcon(flamePath);
+		String w_normal_attackPath = "src/res/img/effect/W_Normal_attack.gif";
+		w_normal_attack = new ImageIcon(w_normal_attackPath);
+		String w_special_attackPath = "src/res/img/effect/Special_attack.gif";
+		w_special_attack = new ImageIcon(w_special_attackPath);
+		
+		status = GlobalState.currentStatus;
+		w_hp = status.getHp();
+		w_attack = status.getAttack();
+		w_defense = status.getDefense();
+		w_agility = status.getAgility();
+		w_luck = status.getLuck();
+		
+		wind = new Bgm();
+        bgm = new Bgm();
+		
+//		bgm = new BattleBgm();
+        
+        try {
+        	wind.wind();
+        	// wind の再生後に bgm を再生するための Timer 設定
+            Timer bgmTimer = new Timer(5000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        bgm.battlescreen();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+            bgmTimer.setRepeats(false); // 一度だけ実行
+        	bgmTimer.start();
+        } catch(Exception e) {
+        	System.out.println("例外が発生しました。");
+        	System.out.println(e);
+        }
+        
+//        if (!wind.isPlaying()) {
+//        	try {
+//				bgm.battlescreen();
+//			} catch(Exception e) {
+//				System.out.println(e);
+//			}
+//        }
 	}
 	
 	public void update() {
@@ -89,24 +142,7 @@ public class BattleScreen extends Screen {
 			}
 		}
 		        
-		//エンターキーを押された時の画面遷移
-		if (keyManager.isKeyPressed(KeyEvent.VK_ENTER)) {
-			if (count == 0) {
-				if(currentSele == 0) {
-					battle();
-					count++;
-				} else if(currentSele == 1) {
-					recovery();
-					count++;
-				}
-			} else {
-				Timer t = new Timer(600, e -> {
-					count = 0;
-				});
-				t.setRepeats(false);
-				t.start();
-			}
-		}
+		
 		
 		if(d_hp <= 0) {
 			BattleScreen = !BattleScreen;
@@ -118,6 +154,8 @@ public class BattleScreen extends Screen {
 					e.printStackTrace();
 				}
 				ScreenManager.getInstance().setScreen(nextScreen);
+				wind.stop();
+				bgm.stop();
 			}
 		} else if (w_hp <= 0) {
 			BattleScreen = !BattleScreen;
@@ -129,6 +167,8 @@ public class BattleScreen extends Screen {
 					e.printStackTrace();
 				}
 				ScreenManager.getInstance().setScreen(nextScreen);
+				wind.stop();
+				bgm.stop();
 			}
 		}
 	};
@@ -156,17 +196,16 @@ public class BattleScreen extends Screen {
 		
 		//タイマー処理
 		Timer display_delay = new Timer(3000, e -> {
-			wind = false;
 			battle = true;
 		});
 		display_delay.start();
 
 		
 		//elseは風の音が止んだ後に表示するもの
-		if (wind) {
+		if (wind.isPlaying()) {
 			g.drawString("(風の音)", 110, 530);
 			g.drawString(text.toString(), 110, 560);
-			System.out.println(text);
+//			System.out.println(text);
 			if (step == 0) {
 				message = "不気味な静寂が辺りを包む……";
 				if (textCount < message.length()) {
@@ -176,13 +215,11 @@ public class BattleScreen extends Screen {
 					step++;
 					textCount = 0;
 				}
-			} else {
-				return;
 			}
-		} else if(battle) {
+		} else {
 			g.setColor(Color.WHITE);
 			g.fillRect(750, 500, 150, 100);		//コマンド選択枠の表示
-			g.drawImage(dragon, 200, 100, 200, 300, null);
+			g.drawImage(dragon, 150, 50, 250, 400, null);
 			g.drawImage(warrior, 650, 250, 150, 150, null);
 			g.setColor(Color.RED);
 			g.fillRect(200, 430, d_hp, 10);	//ドラゴンのHPゲージ
@@ -194,11 +231,33 @@ public class BattleScreen extends Screen {
 			g.drawString("回復薬", 790, 560);
 			g.drawString("ドラゴンが現れた！", 110, 530);
 		}
+		
+		KeyManager keyManager = KeyManager.getInstance();
+		//エンターキーを押された時の画面遷移
+		if (keyManager.isKeyPressed(KeyEvent.VK_ENTER)) {
+			if (count == 0) {
+				if(choice_y == 530) {
+					battle();
+					// GIFアイコンを描画
+			        if (d_normal_attack != null) {
+			            // GIFアイコンを描画する位置を指定 (例: x = 100, y = 100)
+			        	d_normal_attack.paintIcon(null, g, 0, 0);
+			        }
+					count++;
+				} else if(currentSele == 1) {
+					recovery();
+					count++;
+				}
+			} else {
+				Timer t = new Timer(600, e -> {
+					count = 0;
+				});
+				t.setRepeats(false);
+				t.start();
+			}
+		}
+		
 	}
-	
-	public void dispose() {};
-	
-	public void cleanup() {};
 	
 	//コマンド「攻撃」を選択時の処理
 	public void battle() {
@@ -249,8 +308,9 @@ public class BattleScreen extends Screen {
 		//回避の確率計算
 		int a = new java.util.Random().nextInt(100);
 		int agility = 100 - w_agility;
-				
-		w_hp = 100;
+		
+		status = GlobalState.currentStatus;
+		w_hp = status.getHp();
 		System.out.println("戦士は回復薬を使った！　HP全回復！！");
 		
 		//戦士のダメージ反映を遅延する処理
@@ -272,6 +332,15 @@ public class BattleScreen extends Screen {
 		damage_delay.setRepeats(false);
 		damage_delay.start();
 	}
+	
+	public void textSequetially() {
+		
+	}
+	
+	
+	public void dispose() {};
+	
+	public void cleanup() {};
 	
 	// 画像を取得するためのメソッド
 	public Image getImage() {

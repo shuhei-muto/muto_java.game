@@ -5,10 +5,14 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+//import java.util.ArrayList;
+//import javafx.application.Platform;
+
 public class ScreenManager {
 	private static ScreenManager instance;
     private Screen currentScreen;
     private List<Screen> currentScreens;
+//    private List<ScreenChangeListener> listeners = new ArrayList<>();
 	
 	// プライベートコンストラクタ
 	private ScreenManager() {
@@ -33,6 +37,9 @@ public class ScreenManager {
         } catch (IOException e) {
         	e.printStackTrace();
         }
+        
+        // 画面が変更されたことをリスナーに通知
+//        notifyScreenChange();
     }
     
     //画面遷移するメソッド
@@ -60,4 +67,29 @@ public class ScreenManager {
             }
         }
     }
+    
+    
+    public Screen getCurrentScreen() {
+    	return currentScreen;
+    }
+    
+    /*****************************
+     * バトル画面Bgm　MediaPlayer用
+     *****************************/
+    // リスナーを追加するメソッド
+//    public void addScreenChangeListener(ScreenChangeListener listener) {
+//        listeners.add(listener);
+//    }
+
+    // リスナーを削除するメソッド
+//    public void removeScreenChangeListener(ScreenChangeListener listener) {
+//        listeners.remove(listener);
+//    }
+
+    // 画面変更をリスナーに通知するメソッド
+//    private void notifyScreenChange() {
+//        for (ScreenChangeListener listener : listeners) {
+//            listener.onScreenChange(currentScreen);
+//        }
+//    }
 }

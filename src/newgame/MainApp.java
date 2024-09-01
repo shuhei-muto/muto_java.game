@@ -5,8 +5,16 @@ import newgame.screen.ScreenManager;
 import newgame.screen.GameStartScreen;
 import newgame.util.KeyManager;
 
+//import newgame.screen.Screen;
+//import newgame.screen.BattleScreen;
+//import newgame.screen.ScreenChangeListener;
+//import newgame.bgm.BattleBgm;
+//import javafx.stage.Stage;
+//import javafx.application.Application;
+
 public class MainApp {
 
+	
 	    /**********************************
 	     * エントリーポイント
 	     **********************************/
@@ -19,6 +27,10 @@ public class MainApp {
 	    	// 初期化 - 読み込み処理
     		ScreenManager.getInstance().setScreen(gss);
 	    	
+    		
+	    	// ScreenManagerにリスナーを追加
+//	        MainApp app = new MainApp();
+//	        ScreenManager.getInstance().addScreenChangeListener(app);
     		
 	    	
 	    	// フレーム生成
@@ -40,6 +52,12 @@ public class MainApp {
 	        canvas.start();
 	        
 	        
+//	        Screen currentScreen = ScreenManager.getInstance().getCurrentScreen();
+//	        if (currentScreen instanceof BattleScreen) {
+//	        	System.out.println("今バトル画面が表示されている");
+//	        } else {
+//	        	System.out.println("ここで実行されている");
+//	        }
 	        
 	        // テストゲームオブジェクト表示
 //	        ImageObject test = new ImageObject();
@@ -54,6 +72,16 @@ public class MainApp {
 	        canvas.requestFocusInWindow();
 	        System.out.println(canvas.isFocusOwner());
 	        
-	        
 	    }
+	    
+	    /*****************************
+	     * バトル画面Bgm　MediaPlayer用
+	     *****************************/
+//	    @Override
+//	    public void onScreenChange(Screen newScreen) {
+//	        // BattleScreenが現在表示されているかどうかを判定
+//	        if (newScreen instanceof BattleScreen) {
+//	            BattleBgm.startApplication(null);
+//	        }
+//	    }
 	}

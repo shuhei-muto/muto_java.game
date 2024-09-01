@@ -47,6 +47,7 @@ public class GachaScreen extends Screen {
 	public int evo;
 	public int old_evo;
 	public int XevoX;
+	
 	@Override
 	public void init() throws IOException {
 		// 背景画像の読み込み
@@ -80,7 +81,7 @@ public class GachaScreen extends Screen {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                ScreenManager.getInstance().setScreen(nextScreen);
+                ScreenManager.getInstance().setScreen(nextScreen);   
             }
         }
 	};

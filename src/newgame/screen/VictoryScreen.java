@@ -3,11 +3,9 @@ package newgame.screen;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
-
 import javax.imageio.ImageIO;
-
+import newgame.bgm.Bgm;
 import newgame.util.KeyManager;
-
 import java.io.IOException;
 
 public class VictoryScreen extends Screen {
@@ -16,6 +14,7 @@ public class VictoryScreen extends Screen {
 	private Image championship;
 	private Image victory;
 	private boolean victoryScreen = true;
+	private Bgm bgm;
 	
 	@Override
 	public void init() throws IOException {
@@ -23,6 +22,13 @@ public class VictoryScreen extends Screen {
 		background = ImageIO.read(getClass().getClassLoader().getResource("res/img/backimage/victory.jpg"));
 		championship = ImageIO.read(getClass().getClassLoader().getResource("res/img/championship.png"));
 		victory = ImageIO.read(getClass().getClassLoader().getResource("res/img/victory.png"));
+		bgm = new Bgm();	//Bgmインスタンスを作成
+        try {
+        	bgm.victory();	//BGMを再生
+        } catch(Exception e) {
+        	System.out.println("例外が発生しました。");
+            System.out.println(e);
+        }
 	};
 	
 	public void update() {
@@ -33,13 +39,14 @@ public class VictoryScreen extends Screen {
 		if (keyManager.isKeyPressed(KeyEvent.VK_ENTER)) {
 			victoryScreen = !victoryScreen;
 			if (!victoryScreen) {
-				LoseScreen nextScreen = new LoseScreen();
+				GameStartScreen nextScreen = new GameStartScreen();
 				try {
 					nextScreen.init(); // 次の画面の初期化
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				ScreenManager.getInstance().setScreen(nextScreen);
+				bgm.stop();	//クラスフィールドbgmでstopを呼び出す
 			}
 		}
 	};

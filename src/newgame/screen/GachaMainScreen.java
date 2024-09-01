@@ -17,6 +17,7 @@ import newgame.util.GlobalState;
 import newgame.util.KeyManager;
 import newgame.util.Status;
 import newgame.util.WeaponType;
+import newgame.bgm.Bgm;
 
 public class GachaMainScreen extends Screen {
 	private Image background;
@@ -49,7 +50,8 @@ public class GachaMainScreen extends Screen {
 	public Status enum5;
 	public Status enum6;
 	public Status enum7;
-	
+	private Bgm bgm;
+//	private int bgmCount;
 	 
 	@Override
 	public void init() throws IOException {
@@ -68,6 +70,14 @@ public class GachaMainScreen extends Screen {
     	images[1] = (BufferedImage) silver_gacha;
     	images[2] = (BufferedImage) gold_gacha;
     	images[3] = (BufferedImage) battle_button;
+    	bgm = new Bgm();	//Bgmインスタンスを作成
+//    	bgmCount = 0;
+    	try {
+    		bgm.gacha();	//BGMを再生
+    	} catch(Exception e) {
+    		System.out.println("例外が発生しました。");
+            System.out.println(e);
+    	}
     	
     	name = System.getProperty("name");
     	//PropatyにセットするときはString型のため型変換をする
@@ -114,7 +124,7 @@ public class GachaMainScreen extends Screen {
                 "ブーツ：" + enum3.getItemName() + "\n" +
                 "アクセ：" + enum4.getItemName() + "\n" +
                 "ステ上：" + status.getStatusUPCount() + "回" + "\n" +
-                "回復　：" + enum6.getItemName() + "\n" +
+                "回復　：" + status.getPotionCount() + "個" + "\n" +
                 "ランク：" + RankText;
     	
 	}
@@ -134,13 +144,11 @@ public class GachaMainScreen extends Screen {
 	        		currentIndex = 3;
 	        	}
 	        	lastMoveTime = currentTime;	//最後の移動時間を更新
-	        	System.out.println(currentIndex);
 	        }
 	        //右矢印を押したら▲が右に移動(時計回り)
 	        if (keyManager.isKeyPressed(KeyEvent.VK_RIGHT)) {
 	        	if(currentIndex < images.length - 1) {
 	        		currentIndex++;	// 右矢印キーで右に移動
-	        		System.out.println(currentIndex);
 	        	} else if(currentIndex == 3) {
 	        		currentIndex = 0;
 	        	}
@@ -178,12 +186,15 @@ public class GachaMainScreen extends Screen {
         	} else {	//バトル画面選択時はバトル画面へ
         		if(!gachaMainScreen) {
         			BattleScreen nextnextScreen = new BattleScreen();
-        			try {
-        				nextnextScreen.init();	//次表示する画面の初期化
-        			} catch (IOException e) {
-        				e.printStackTrace();
-        			}
+//        			try {
+//        				nextnextScreen.init();	//次表示する画面の初期化
+//        			} catch (IOException e) {
+//        				e.printStackTrace();
+//        			}
         			ScreenManager.getInstance().setScreen(nextnextScreen);
+        			bgm.stop();	//クラスフィールドbgmでstopを呼び出す
+//        			bgmCount = 0;
+        			System.out.println("バトル画面へ");
         		}
         	}
         }
@@ -211,7 +222,7 @@ public class GachaMainScreen extends Screen {
 		//**********ここに所持金を入れる**********************
 		String moneyText = "所持金：$" + money;
 		//*************************************************
-		g.setColor(Color.GRAY);	//名前が入る四角の部分
+		g.setColor(new Color(128, 128, 128, 128));	//名前が入る四角の部分
 		FontMetrics fm = g.getFontMetrics();	
 		// 文字列の幅を取得
 		int statusWidth = fm.stringWidth("【" + name + "】");
