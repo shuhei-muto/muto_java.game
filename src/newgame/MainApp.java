@@ -70,7 +70,7 @@ public class MainApp {
 	        KeyManager keyManager = KeyManager.getInstance();
 	        canvas.addKeyListener(keyManager);
 	        canvas.requestFocusInWindow();
-	        System.out.println(canvas.isFocusOwner());
+//	        System.out.println(canvas.isFocusOwner());
 	        
 	    }
 	    

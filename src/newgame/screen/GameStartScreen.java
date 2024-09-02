@@ -65,11 +65,11 @@ public class GameStartScreen extends Screen {
         	startScreen = !startScreen;
         	if (!startScreen) {
         		NameScreen nextScreen = new NameScreen();
-        		try {
-                	nextScreen.init(); // 次の画面の初期化
-        		} catch (IOException e) {
-                    e.printStackTrace();
-                }
+//        		try {
+//                	nextScreen.init(); // 次の画面の初期化
+//        		} catch (IOException e) {
+//                    e.printStackTrace();
+//                }
                 ScreenManager.getInstance().setScreen(nextScreen);
                 bgm.stop();	//クラスフィールドbgmでstopを呼び出す
             }

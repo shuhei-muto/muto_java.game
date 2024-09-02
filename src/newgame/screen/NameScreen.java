@@ -67,11 +67,11 @@ public class NameScreen extends Screen {
                 
                 //ステータスの初期設定(HP,攻撃,防御,回避,運)
                 GlobalState.currentStatus = new Status(10, 5, 3, 4, 2, 0, 0, 1);
-                try {
-                    nextScreen.init(); // 次の画面の初期化
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    nextScreen.init(); // 次の画面の初期化
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
                 ScreenManager.getInstance().setScreen(nextScreen);
                 bgm.stop();	//クラスフィールドbgmでstopを呼び出す
             }

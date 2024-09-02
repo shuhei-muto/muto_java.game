@@ -50,7 +50,8 @@ public class GachaMainScreen extends Screen {
 	public Status enum5;
 	public Status enum6;
 	public Status enum7;
-	private Bgm bgm;
+	private Bgm bgm = new Bgm();
+	public int screenCount;
 //	private int bgmCount;
 	 
 	@Override
@@ -70,10 +71,12 @@ public class GachaMainScreen extends Screen {
     	images[1] = (BufferedImage) silver_gacha;
     	images[2] = (BufferedImage) gold_gacha;
     	images[3] = (BufferedImage) battle_button;
-    	bgm = new Bgm();	//Bgmインスタンスを作成
 //    	bgmCount = 0;
     	try {
-    		bgm.gacha();	//BGMを再生
+//    		if(screenCount == 0) {
+    		bgm.stop();
+//    			bgm.gacha();	//BGMを再生
+//    		}
     	} catch(Exception e) {
     		System.out.println("例外が発生しました。");
             System.out.println(e);
@@ -194,7 +197,6 @@ public class GachaMainScreen extends Screen {
         			ScreenManager.getInstance().setScreen(nextnextScreen);
         			bgm.stop();	//クラスフィールドbgmでstopを呼び出す
 //        			bgmCount = 0;
-        			System.out.println("バトル画面へ");
         		}
         	}
         }
@@ -217,7 +219,6 @@ public class GachaMainScreen extends Screen {
 		g.drawImage(gold_gacha, 670, 450, 280, 100, null);
 		g.drawImage(silver_gacha, 360, 450, 280, 100, null);
 		g.drawImage(bronze_gacha, 50, 450, 280, 100, null);
-		System.out.println("1");
 		
 		//**********ここに所持金を入れる**********************
 		String moneyText = "所持金：$" + money;

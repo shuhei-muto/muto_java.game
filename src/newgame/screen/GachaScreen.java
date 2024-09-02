@@ -69,18 +69,17 @@ public class GachaScreen extends Screen {
         	gachaScreen = !gachaScreen;
         	if (!gachaScreen && return_screen) {
                 GachaMainScreen nextScreen = new GachaMainScreen();
-                try {
-                	statusSet();//入手したアイテムをステータスに反映させる
-                	// EquipmentManager のインスタンスを作成
-                	// グローバル状態から EquipmentManager を取得
-                    EquipmentManager manager = GlobalState.equipmentManager;
-                	manager.equipItem(weaponType, getWeaponStatus); 
-                    
-                	
-                    nextScreen.init(); // 次の画面の初期化
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                
+                statusSet();//入手したアイテムをステータスに反映させる
+                // EquipmentManager のインスタンスを作成
+            	// グローバル状態から EquipmentManager を取得
+                EquipmentManager manager = GlobalState.equipmentManager;
+            	manager.equipItem(weaponType, getWeaponStatus);
+//                try {
+//                    nextScreen.init(); // 次の画面の初期化
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
                 ScreenManager.getInstance().setScreen(nextScreen);   
             }
         }
