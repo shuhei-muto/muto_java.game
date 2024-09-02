@@ -13,11 +13,10 @@ import javax.swing.Timer;
 
 import newgame.DatabaseConnection;
 import newgame.DatabaseConnection.CharanameResult;
+import newgame.bgm.Bgm;
 import newgame.util.GlobalState;
 import newgame.util.KeyManager;
 import newgame.util.Status;
-
-import newgame.bgm.Bgm;
 
 public class NameScreen extends Screen {
 	
@@ -30,6 +29,7 @@ public class NameScreen extends Screen {
 	private boolean text = true;
 	private boolean button = false;
 	private Bgm bgm;
+	private boolean return_screen = false;
 	
 	
 	@Override
@@ -51,6 +51,8 @@ public class NameScreen extends Screen {
 			System.out.println(e);
 		}
 		
+        
+		
 	}
 	
 	public void update() {
@@ -59,7 +61,7 @@ public class NameScreen extends Screen {
         //エンターキーを押された時の画面遷移
         if (keyManager.isKeyPressed(KeyEvent.VK_ENTER)) {
         	nameScreen = !nameScreen;
-        	if (!nameScreen) {
+        	if (!nameScreen && return_screen ) {
                 GachaMainScreen nextScreen = new GachaMainScreen();
                 System.setProperty("name", name);
                 //setPropertyはString型を引数にするためint型から変換をする
@@ -120,6 +122,7 @@ public class NameScreen extends Screen {
     		g.drawString(loadMoneyText, 480 - loadMoneyCenterX, 595);
     		g.drawString(loadMoneyText2, 480 + loadMoneyCenterX, 595);
         } else if (!text && button) {
+        	return_screen = true;
         	g.drawImage(scaledDeButton, centerX_dB, 450, null);
     		g.drawString("Enter", 475, 525);
     		

@@ -5,14 +5,14 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import java.io.IOException;
-import newgame.util.KeyManager;
 import newgame.bgm.Bgm;
-
-import javax.swing.*;
+import newgame.util.KeyManager;
 
 
 public class GameStartScreen extends Screen {
@@ -35,6 +35,7 @@ public class GameStartScreen extends Screen {
 	private Image d_normal_attack;
 	private Image gifImage;
 	private Icon gifIcon;
+	private boolean return_screen = false;
 	
 	@Override
 	public void init() throws IOException {
@@ -63,7 +64,7 @@ public class GameStartScreen extends Screen {
 		//エンターキーを押された時の画面遷移
         if (keyManager.isKeyPressed(KeyEvent.VK_ENTER)) {
         	startScreen = !startScreen;
-        	if (!startScreen) {
+        	if (!startScreen && return_screen) {
         		NameScreen nextScreen = new NameScreen();
 //        		try {
 //                	nextScreen.init(); // 次の画面の初期化
@@ -132,6 +133,7 @@ public class GameStartScreen extends Screen {
         	} else {
         		step++;
         		count = 0;
+        		return_screen = true;
         	}
         } else {
         	return;
