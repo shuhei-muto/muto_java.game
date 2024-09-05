@@ -124,10 +124,12 @@ public class GachaScreen extends Screen {
         if(weaponType.equals(WeaponType.進化アイテム)) {
         	if(evo == 1) {
         		g.drawImage(warrior,   450, 480, 50, 50, null);
-        		g.drawImage(first_evo, 550, 380, 150, 150, null);//int x, int y, int width, int height
+        		g.drawImage(arrow,     500, 430, 100, 100, null);
+        		g.drawImage(first_evo, 600, 330, 200, 200, null);//int x, int y, int width, int height
         	} else if (evo == 2) {
-        		g.drawImage(first_evo ,   450, 480, 50, 50, null);
-        		g.drawImage(second_evo, 550, 380, 150, 150, null);
+        		g.drawImage(first_evo,  450, 480, 50, 50, null);
+        		g.drawImage(arrow,      500, 430, 100, 100, null);
+        		g.drawImage(second_evo, 600, 330, 200, 200, null);
         	} else {
         		System.out.println("これ以上進化しないよ");
         	}
