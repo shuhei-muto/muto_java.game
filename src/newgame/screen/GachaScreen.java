@@ -27,6 +27,7 @@ public class GachaScreen extends Screen {
 	private Image warrior;
 	private Image first_evo;
 	private Image second_evo;
+	private Image arrow;
 	private boolean gachaScreen = true;
 	private boolean return_screen = false;
 	public String itemName;
@@ -56,6 +57,7 @@ public class GachaScreen extends Screen {
         warrior = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/warrior.gif"));
         first_evo = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/first_evolution.gif"));
         second_evo = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/second_evolution.gif"));
+        arrow = ImageIO.read(getClass().getClassLoader().getResource("res/img/arrow.png"));
         gacha();//ガチャを引く
     	
 	}

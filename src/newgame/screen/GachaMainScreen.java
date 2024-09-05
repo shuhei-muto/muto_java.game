@@ -38,6 +38,7 @@ public class GachaMainScreen extends Screen {
 	private long moveDelay = 300;	//遅延させる時間
 	public String name;	//ガチャで取得した名前を入れる
 	public int money;	//ガチャで取得した所持金を入れる
+	public String RankText;
 	private boolean enough = false;
 	public Status status;
 	public String statusText;
@@ -92,7 +93,6 @@ public class GachaMainScreen extends Screen {
         EquipmentManager manager = GlobalState.equipmentManager;
         //manager.printEquippedItems(); 装備中のアイテムをコンソールに表示
         int Rank = status.getEvolitionCount();
-        String RankText ;
         if(Rank == 1) {
         	RankText = "見習い";
         } else if (Rank == 2) {

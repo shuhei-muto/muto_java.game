@@ -55,13 +55,6 @@ public class MainCanvas extends Canvas implements Runnable {
 	                delta--;
 	            }
 	            draw();
-	            
-	            // スリープを追加してループの速度を遅くする
-//	            try {
-//	                Thread.sleep(50); // 100ミリ秒スリープ (0.1秒)
-//	            } catch (InterruptedException e) {
-//	                e.printStackTrace();
-//	            }
 	        }
 	        stop();
 	    }
@@ -94,13 +87,6 @@ public class MainCanvas extends Canvas implements Runnable {
 	        g.setColor(Color.WHITE);
 	        g.fillRect(0, 0, getWidth(), getHeight());
 	        
-//	        g.setColor(Color.BLACK);
-//	        g.fillOval(x, 250, 50, 50);
-//	        
-//	        g.setColor(Color.BLACK);
-//	        g.drawString("FPS: aaaaaaaaaaaaa", 10, 20);
-	        
-//	    	GameObjectManager.getInstance().drawAll(g);
 	        ScreenManager.getInstance().draw(g);
 	        
 	        // 使い終わったのでリソース破棄
