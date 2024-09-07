@@ -90,7 +90,7 @@ public class Status {
     	this.potionCount = potionCount;
     }
     
-    public int getEvolitionCount() {
+    public int getEvolutionCount() {
     	return this.evolutionCount;
     }
     public void setevolutionCount(int evolutionCount) {

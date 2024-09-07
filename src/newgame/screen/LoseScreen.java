@@ -41,11 +41,6 @@ public class LoseScreen extends Screen {
 			loseScreen = !loseScreen;
 			if (!loseScreen) {
 				GameStartScreen nextScreen = new GameStartScreen();
-//				try {
-//					nextScreen.init(); // 次の画面の初期化
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
 				ScreenManager.getInstance().setScreen(nextScreen);
 				bgm.stop();	//クラスフィールドbgmでstopを呼び出す
 			}

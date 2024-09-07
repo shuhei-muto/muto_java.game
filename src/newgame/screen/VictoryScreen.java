@@ -13,6 +13,7 @@ public class VictoryScreen extends Screen {
 	private Image background;
 	private Image championship;
 	private Image victory;
+	private Image replay;
 	private boolean victoryScreen = true;
 	private Bgm bgm;
 	
@@ -22,6 +23,8 @@ public class VictoryScreen extends Screen {
 		background = ImageIO.read(getClass().getClassLoader().getResource("res/img/backimage/victory.jpg"));
 		championship = ImageIO.read(getClass().getClassLoader().getResource("res/img/championship.png"));
 		victory = ImageIO.read(getClass().getClassLoader().getResource("res/img/victory.png"));
+		replay = ImageIO.read(getClass().getClassLoader().getResource("res/img/button/REPLAY.png"));
+		
 		bgm = new Bgm();	//Bgmインスタンスを作成
         try {
         	bgm.victory();	//BGMを再生
@@ -60,6 +63,7 @@ public class VictoryScreen extends Screen {
 		g.drawImage(background, 0, 0, 1000, 700, null);
 		g.drawImage(championship, 230, 100, 500, 500, null);
 		g.drawImage(victory, 300, 50, 400, 250, null);
+		g.drawImage(replay, 370, 550, 250, 80, null);
 	};
 	
 	public void dispose() {};

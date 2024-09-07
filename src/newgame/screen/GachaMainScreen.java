@@ -75,8 +75,8 @@ public class GachaMainScreen extends Screen {
 //    	bgmCount = 0;
     	try {
 //    		if(screenCount == 0) {
-    		bgm.stop();
-//    			bgm.gacha();	//BGMを再生
+//    		bgm.stop();
+			bgm.gacha();	//BGMを再生
 //    		}
     	} catch(Exception e) {
     		System.out.println("例外が発生しました。");
@@ -92,7 +92,7 @@ public class GachaMainScreen extends Screen {
         // グローバル状態から EquipmentManager を取得
         EquipmentManager manager = GlobalState.equipmentManager;
         //manager.printEquippedItems(); 装備中のアイテムをコンソールに表示
-        int Rank = status.getEvolitionCount();
+        int Rank = status.getEvolutionCount();
         if(Rank == 1) {
         	RankText = "見習い";
         } else if (Rank == 2) {
@@ -172,31 +172,20 @@ public class GachaMainScreen extends Screen {
         		        });
         		        timer.setRepeats(false); // タイマーは一度だけ動作させる
         		        timer.start();
-        		        
         				return;
         			};//選択された画像に対する処理
         			GachaScreen nextScreen = new GachaScreen();
         			System.setProperty("gachaNo", String.valueOf(currentIndex));
         			//setPropertyはString型を引数にするためint型から変換をする
                     System.setProperty("money", String.valueOf(money));
-        			try {
-        				nextScreen.init(); // 次表示する画面の初期化
-        			} catch (IOException e) {
-        				e.printStackTrace();
-        			}
         			ScreenManager.getInstance().setScreen(nextScreen);
+        			bgm.stop();	//クラスフィールドbgmでstopを呼び出す
         		}
         	} else {	//バトル画面選択時はバトル画面へ
         		if(!gachaMainScreen) {
         			BattleScreen nextnextScreen = new BattleScreen();
-//        			try {
-//        				nextnextScreen.init();	//次表示する画面の初期化
-//        			} catch (IOException e) {
-//        				e.printStackTrace();
-//        			}
         			ScreenManager.getInstance().setScreen(nextnextScreen);
         			bgm.stop();	//クラスフィールドbgmでstopを呼び出す
-//        			bgmCount = 0;
         		}
         	}
         }

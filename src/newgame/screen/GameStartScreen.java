@@ -8,8 +8,6 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 
 import newgame.bgm.Bgm;
 import newgame.util.KeyManager;
@@ -31,10 +29,6 @@ public class GameStartScreen extends Screen {
 	StringBuilder text2 = new StringBuilder();
 	StringBuilder text3 = new StringBuilder();
 	private Bgm bgm;
-	
-	private Image d_normal_attack;
-	private Image gifImage;
-	private Icon gifIcon;
 	private boolean return_screen = false;
 	
 	@Override
@@ -42,11 +36,6 @@ public class GameStartScreen extends Screen {
 		// 背景画像とその他の画像読み込み
 		background = ImageIO.read(getClass().getClassLoader().getResource("res/img/backimage/start.jpg"));
 		administrator = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/administrator.png"));
-		
-		d_normal_attack = ImageIO.read(getClass().getClassLoader().getResource("res/img/effect/D_Normal_attack.gif"));
-		String gifPath = "src/res/img/effect/D_Normal_attack.gif";
-        gifIcon = new ImageIcon(gifPath);
-        
 		
 		bgm = new Bgm();	//Bgmインスタンスを作成
         try {
@@ -66,11 +55,6 @@ public class GameStartScreen extends Screen {
         	startScreen = !startScreen;
         	if (!startScreen && return_screen) {
         		NameScreen nextScreen = new NameScreen();
-//        		try {
-//                	nextScreen.init(); // 次の画面の初期化
-//        		} catch (IOException e) {
-//                    e.printStackTrace();
-//                }
                 ScreenManager.getInstance().setScreen(nextScreen);
                 bgm.stop();	//クラスフィールドbgmでstopを呼び出す
             }

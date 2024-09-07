@@ -24,15 +24,13 @@ public class BattleScreen extends Screen {
 	private Image warrior;
 	private Image w_first_evolution;
 	private Image w_second_evolution;
-	private Icon d_normal_attack;
-	private Icon flame;
-	private Icon w_normal_attack;
-	private Icon w_special_attack;
-	private Icon gifImage;
+	private Image display_warrior;
+//	private Icon d_normal_attack;
+//	private Icon flame;
+//	private Icon w_normal_attack;
+//	private Icon w_special_attack;
+//	private Icon gifImage;
 	
-	//タイマーによる表示非表示に使用する変数
-	
-//	private boolean battle = false;
 	private boolean BattleScreen = true;
 	
 	//キャラステータスの変数
@@ -41,25 +39,33 @@ public class BattleScreen extends Screen {
 	int w_defense;
 	int w_agility;
 	int w_luck;
+	int potion;
+	int evolution;
+	
+	int charaX;		//進化用キャラの横幅
+	int charaY;		//進化用キャラの縦幅
 	
 	int d_hp = 200;
 	int d_attack = 50;
 	int d_defense = 30;
 	int d_damage;
 	int w_damage;
-	int count = 0; //コマンドの連続押下防止用
+	int count = 0;		//コマンドの連続押下防止用
+	boolean command = false;	//コマンドが実行されたか	
 	
 	//テキスト表示のローカル変数
 	private int textCount = 0;
 	private String message1;
 	private String message2;
 	private String message3;
+	String potionCount;
 	String doragon_damage;
 	String warrior_damage;
-	String d_damageMessage;
-	String w_damageMessage;
-	String critical;
-	String avoid;
+	String d_damageMessage = null;		//ドラゴンに数値ダメージ与えた
+	String w_damageMessage = null;		//戦士は数値ダメージ
+	String critical = null;
+	String avoid = null;
+	String recovery = null;
 	StringBuilder text1 = new StringBuilder();		//不気味な静寂が辺りを包む……
 	StringBuilder text2 = new StringBuilder();		//ドラゴンが現れた
 	StringBuilder text3 = new StringBuilder();		//ドラゴンを倒せ
@@ -67,6 +73,7 @@ public class BattleScreen extends Screen {
 	StringBuilder d_damageText = new StringBuilder();
 	StringBuilder criticalText = new StringBuilder();
 	StringBuilder avoidText = new StringBuilder();
+	StringBuilder recoveryText = new StringBuilder();
 	int step1 = 0;
 	int step2 = 0;
 	int step3 = 0;
@@ -74,13 +81,13 @@ public class BattleScreen extends Screen {
 	int y;
 	
 	int choice_y = 530;
+	int charaP_y;
 	private int currentSele = 0;
 	private Status status;
 	
 	//BGM
 	private Bgm bgm;
 	private Bgm wind;
-//	private BattleBgm bgm;
 	
 	
 	@Override
@@ -92,14 +99,14 @@ public class BattleScreen extends Screen {
 		w_first_evolution = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/first_evolution.gif"));
 		w_second_evolution = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/second_evolution.gif"));
 		
-		String d_attackPath = "src/res/img/effect/D_Normal_attack.gif";
-		d_normal_attack = new ImageIcon(d_attackPath);
-		String flamePath = "src/res/img/effect/flame.gif";
-		flame = new ImageIcon(flamePath);
-		String w_normal_attackPath = "src/res/img/effect/W_Normal_attack.gif";
-		w_normal_attack = new ImageIcon(w_normal_attackPath);
-		String w_special_attackPath = "src/res/img/effect/Special_attack.gif";
-		w_special_attack = new ImageIcon(w_special_attackPath);
+//		String d_attackPath = "src/res/img/effect/D_Normal_attack.gif";
+//		d_normal_attack = new ImageIcon(d_attackPath);
+//		String flamePath = "src/res/img/effect/flame.gif";
+//		flame = new ImageIcon(flamePath);
+//		String w_normal_attackPath = "src/res/img/effect/W_Normal_attack.gif";
+//		w_normal_attack = new ImageIcon(w_normal_attackPath);
+//		String w_special_attackPath = "src/res/img/effect/Special_attack.gif";
+//		w_special_attack = new ImageIcon(w_special_attackPath);
 		
 		status = GlobalState.currentStatus;
 		w_hp = status.getHp();
@@ -107,6 +114,26 @@ public class BattleScreen extends Screen {
 		w_defense = status.getDefense();
 		w_agility = status.getAgility();
 		w_luck = status.getLuck();
+		potion = status.getPotionCount();
+		evolution = status.getEvolutionCount();
+
+		if(evolution == 1) {
+			display_warrior = warrior;
+			charaX = 150;
+			charaY = 150;
+			charaP_y = 250;
+		} else if(evolution == 2) {
+			display_warrior = w_first_evolution;
+			charaX = 160;
+			charaY = 250;
+			charaP_y = 200;
+		} else if(evolution == 3) {
+			display_warrior = w_second_evolution;
+			charaX = 240;
+			charaY = 300;
+			charaP_y = 170;
+		}
+		
 		
 		wind = new Bgm();
         bgm = new Bgm();
@@ -132,14 +159,6 @@ public class BattleScreen extends Screen {
         	System.out.println("例外が発生しました。");
         	System.out.println(e);
         }
-        
-//        if (!wind.isPlaying()) {
-//        	try {
-//				bgm.battlescreen();
-//			} catch(Exception e) {
-//				System.out.println(e);
-//			}
-//        }
 	}
 	
 	public void update() {
@@ -208,8 +227,7 @@ public class BattleScreen extends Screen {
 		
 		//elseは風の音が止んだ後に表示するもの
 		if (wind.isPlaying()) {
-			g.drawString("(風の音)", 110, 530);
-			g.drawString(text1.toString(), 110, 560);
+			g.drawString(text1.toString(), 110, 530);
 //			System.out.println(text);
 			if (step1 == 0) {
 				message1 = "不気味な静寂が辺りを包む……";
@@ -226,7 +244,7 @@ public class BattleScreen extends Screen {
 			g.setColor(Color.WHITE);
 			g.fillRect(750, 500, 150, 100);		//コマンド選択枠の表示
 			g.drawImage(dragon, 150, 50, 250, 400, null);
-			g.drawImage(warrior, 650, 250, 150, 150, null);
+			g.drawImage(display_warrior, 650, charaP_y, charaX, charaY, null);
 			g.setColor(Color.RED);
 			g.fillRect(200, 430, d_hp, 10);	//ドラゴンのHPゲージ
 			g.fillRect(680, 430, w_hp, 10);	//戦士のHPゲージ
@@ -234,10 +252,14 @@ public class BattleScreen extends Screen {
 			g.setColor(Color.BLACK);
 			g.drawString("▶", 760, choice_y);
 			g.drawString("攻撃", 790, 530);
-			g.drawString("回復薬", 790, 560);
 			
-			if(d_damageMessage == null) {
-				//バトル前テキスト表示*************************
+			potionCount = String.valueOf(potion);
+			String potionText = "回復薬×" + potionCount;
+			g.drawString(potionText, 790, 560);
+			
+			
+			if(!command) {
+				//*************バトル前テキスト表示****************
 				g.drawString(text2.toString(), 110, 530);
 				if (step2 == 0) {
 					message2 = "ドラゴンが現れた！";
@@ -266,21 +288,22 @@ public class BattleScreen extends Screen {
 				//******************************************
 				
 			} else {
-				//****************攻撃テキスト******************
-				g.drawString(criticalText.toString(), 110, 530);
-				if(critical != null) {		//クリティカルヒットしたらクリティカルテキスト表示
-					if (textCount < critical.length()) {
-						criticalText.append(critical.charAt(textCount));
-						textCount++;
-						System.out.println(criticalText);
-					} else {
-						textStep++;
-						textCount = 0;
-					}
-					
-				} else if(critical != null && textStep == 1) {
-					g.drawString(d_damageText.toString(), 110, 560);
-					if(critical != null && textStep == 1) {
+				//***************攻撃テキスト表示*****************
+				if(d_damageMessage != null) {
+					g.drawString(criticalText.toString(), 110, 530);
+					g.drawString(d_damageText.toString(), 110, y);
+					if(critical != null && textStep == 0) {		//クリティカルヒットしたらクリティカルテキスト表示
+						if (textCount < critical.length()) {
+							criticalText.append(critical.charAt(textCount));
+							textCount++;
+							System.out.println(criticalText);
+						} else {
+							textStep++;
+							textCount = 0;
+						}
+						
+					} else if(critical != null && textStep == 1) {
+						y = 560;
 						if (textCount < d_damageMessage.length()) {
 							d_damageText.append(d_damageMessage.charAt(textCount));
 							textCount++;
@@ -289,10 +312,8 @@ public class BattleScreen extends Screen {
 							textStep++;
 							textCount = 0;
 						}
-					}
-				} else {	//クリティカルヒットしなければ通常のテキストを表示
-					g.drawString(d_damageText.toString(), 110, 530);
-					if(textStep == 0) {
+					} else if(critical == null && textStep == 0) {	//クリティカルヒットしなければ通常のテキストを表示
+						y = 530;
 						if (textCount < d_damageMessage.length()) {
 							d_damageText.append(d_damageMessage.charAt(textCount));
 							textCount++;
@@ -304,26 +325,60 @@ public class BattleScreen extends Screen {
 					}
 				}
 				
-				
-
-				
-				
-				
-				
 				//****************ダメージ受けたテキスト******************
-//				g.drawString(w_damageText.toString(), 110, 590);
-//				if(textStep == 2) {
-//					if (textCount < w_damageMessage.length()) {
-//						w_damageText.append(w_damageMessage.charAt(textCount));
-//						textCount++;
-//						System.out.println(w_damageText);
-//					} else {
-//						textStep++;
-//						textCount = 0;
-//					}
-//				}
+				if(w_damageMessage != null) {
+					g.drawString(avoidText.toString(), 110, 530);
+					g.drawString(w_damageText.toString(), 110, y);
+					if (avoid != null && textStep == 0) {		//ドラゴンの攻撃を避けた場合
+						if (textCount < avoid.length()) {
+							avoidText.append(avoid.charAt(textCount));
+							textCount++;
+							System.out.println(avoidText);
+						} else {
+							textStep++;
+							textCount = 0;
+						}
+						
+					} else if(avoid != null && textStep == 1) {
+						y = 560;
+						if (textCount < w_damageMessage.length()) {
+							w_damageText.append(w_damageMessage.charAt(textCount));
+							textCount++;
+							System.out.println(w_damageText);
+						} else {
+							textStep++;
+							textCount = 0;
+						}
+					} else if(avoid == null && textStep == 0) {		//ドラゴンの攻撃を避けれなかったら
+						y = 530;
+						if (textCount < w_damageMessage.length()) {
+							w_damageText.append(w_damageMessage.charAt(textCount));
+							textCount++;
+							System.out.println(w_damageText);
+						} else {
+							textStep++;
+							textCount = 0;
+						}
+					}
+				}
+
+				//***************回復テキスト表示*****************
+				if(recovery != null) {
+					g.drawString(avoidText.toString(), 110, 560);
+					g.drawString(recoveryText.toString(), 110, 530);
+					g.drawString(d_damageText.toString(), 110, y);
+					if(textStep == 0) {		//回復薬を使った場合
+						if (textCount < recovery.length()) {
+							recoveryText.append(recovery.charAt(textCount));
+							textCount++;
+							System.out.println(recoveryText);
+						} else {
+							textStep++;
+							textCount = 0;
+						}
+					} 
+				}
 			}
-			
 		}
 		
 		KeyManager keyManager = KeyManager.getInstance();
@@ -332,18 +387,28 @@ public class BattleScreen extends Screen {
 			if (count == 0) {
 				if(choice_y == 530) {
 					battle();		//攻撃した時のメソッド実行
-					// GIFアイコンを描画
-			        if (d_normal_attack != null) {
-			            // GIFアイコンを描画する位置を指定 (例: x = 100, y = 100)
-			        	d_normal_attack.paintIcon(null, g, 0, 0);
-			        }
+					Timer damage_delay = new Timer(2500, e -> {
+						damage();
+					});
+					damage_delay.setRepeats(false);
+					damage_delay.start();
 					count++;
+					// GIFアイコンを描画
+//			        if (d_normal_attack != null) {
+			            // GIFアイコンを描画する位置を指定 (例: x = 100, y = 100)
+//			        	d_normal_attack.paintIcon(null, g, 0, 0);
+//				}
 				} else if(currentSele == 1) {
 					recovery();		//回復薬を使った時のメソッド実行
+					Timer damage_delay = new Timer(2000, e -> {
+						damage();
+					});
+					damage_delay.setRepeats(false);
+					damage_delay.start();
 					count++;
 				}
 			} else {
-				Timer t = new Timer(700, e -> {
+				Timer t = new Timer(700, e -> {		//連続コマンドの実行防止
 					count = 0;
 				});
 				t.setRepeats(false);
@@ -355,13 +420,22 @@ public class BattleScreen extends Screen {
 	
 	//コマンド「攻撃」を選択時の処理
 	public void battle() {
+		command = true;
+		//初期化
 		textStep = 0;
+		recovery = null;
+		recoveryText.setLength(0);
+		
+		if(w_damageMessage != null || avoid != null) {
+			w_damageMessage = null;
+			avoid = null;
+			w_damageText.setLength(0);
+			avoidText.setLength(0);
+		}
+		
 		//クリティカルの確率計算
-		int l = new java.util.Random().nextInt(100);
+		int r = new java.util.Random().nextInt(100);
 		int luck = 100 - w_luck;
-		//回避の確率計算
-		int a = new java.util.Random().nextInt(100);
-		int agility = 100 - w_agility;
 		
 		//ドラゴンのダメージ処理*****************
 		if (w_attack > d_defense) {
@@ -371,7 +445,7 @@ public class BattleScreen extends Screen {
 		}
 		
 		//クリティカルヒットした時の処理
-		if (luck <= l) {
+		if (luck <= r) {
 			d_damage = d_damage * 2;
 			critical = "攻撃がクリティカルヒットした！！";
 			System.out.println("クリティカルヒット");
@@ -384,66 +458,86 @@ public class BattleScreen extends Screen {
 		System.out.println(d_damageMessage);
 		//*************************************
 		
-		
-		//戦士のダメージ処理**********************
-		Timer damage_delay = new Timer(2000, e -> {		//戦士のダメージ反映を遅延する処理
-			if (d_attack > w_defense) {
-				w_damage = d_attack - w_defense;
-			} else {
-				w_damage = 1;
-			}
-			
-			//攻撃を回避した時の処理
-			if (agility <= a) {
-				w_damage = 0;
-				avoid = "ドラゴンの攻撃を避けた";
-				System.out.println("ドラゴンの攻撃を避けた");
-			} else {
-				avoid = null;
-				return;
-			}
-			w_hp -= w_damage;
-			warrior_damage = String.valueOf(w_damage);
-			w_damageMessage = "戦士に" + warrior_damage + "のダメージ";
-			System.out.println(w_damageMessage);
-			//*******************************
-		});
-		damage_delay.setRepeats(false);
-		damage_delay.start();
+		if(d_hp <= 0) {
+			try {
+		        Thread.sleep(1000); // 1秒スリープ
+		    } catch (InterruptedException e) {
+		        e.printStackTrace();
+		    }
+			return;
+		}
 	};
 	
 	
 	//コマンド「回復薬」を選択時の処理
 	public void recovery() {
+		command = true;
+		//初期化
 		textStep = 0;
+		
+		if(w_damageMessage != null || avoid != null) {
+			w_damageMessage = null;
+			avoid = null;
+			w_damageText.setLength(0);
+			avoidText.setLength(0);
+		}
+		
+		if(potion > 0) {
+			potion--;
+			status = GlobalState.currentStatus;
+			w_hp = status.getHp();
+			recovery = "戦士は回復薬を使った！　HP全回復！！";
+			System.out.println("戦士は回復薬を使った！　HP全回復！！");
+		} else {
+			recovery = "回復薬がないみたいだ...";
+			System.out.println("回復薬がないみたいだ...");
+		}
+	}
+	
+	public void damage() {
 		//回避の確率計算
 		int a = new java.util.Random().nextInt(100);
 		int agility = 100 - w_agility;
 		
-		status = GlobalState.currentStatus;
-		w_hp = status.getHp();
-		System.out.println("戦士は回復薬を使った！　HP全回復！！");
+		//テキスト初期化
+		d_damageMessage = null;
+		critical = null;
+		recovery = null;
+		d_damageText.setLength(0);
+		criticalText.setLength(0);
+		textStep = 0;
 		
-		//戦士のダメージ処理
-		Timer damage_delay = new Timer(2000, e -> {		//戦士のダメージ反映を遅延する処理
-			if (d_attack > w_defense) {
-				w_damage = d_attack - w_defense;
-			} else {
-				w_damage = 1;
-			}
-			
-			//攻撃を回避した時の処理
-			if (agility <= a) {
-				w_damage = 0;
-				System.out.println("ドラゴンの攻撃を避けた");
-			}
-			w_hp -= w_damage;
-			System.out.println("戦士に" + w_damage + "のダメージ");
-		});
-		damage_delay.setRepeats(false);
-		damage_delay.start();
+		
+		//戦士のダメージ処理**********************
+		if (d_attack > w_defense) {
+			w_damage = d_attack - w_defense;
+		} else {
+			w_damage = 1;
+		}
+		
+		//攻撃を回避した時の処理
+		if (agility <= a) {
+			w_damage = 0;
+			avoid = "ドラゴンの攻撃を避けた！！";
+			System.out.println("ドラゴンの攻撃を避けた！");
+		} else {
+			avoid = null;
+		}
+		w_hp -= w_damage;
+		warrior_damage = String.valueOf(w_damage);
+		w_damageMessage = "戦士に" + warrior_damage + "のダメージ！";
+		System.out.println(w_damageMessage);
+		//*******************************
+		
+		if(w_hp <= 0) {
+			try {
+		        Thread.sleep(1000); // 1秒スリープ
+		    } catch (InterruptedException e) {
+		        e.printStackTrace();
+		    }
+			return;
+		}
 	}
-	
 	
 	public void dispose() {};
 	
