@@ -13,6 +13,7 @@ import javax.swing.Timer;
 
 import newgame.DatabaseConnection;
 import newgame.DatabaseConnection.GachaResult;
+import newgame.bgm.Bgm;
 import newgame.util.EquipmentManager;
 import newgame.util.GlobalState;
 import newgame.util.ItemRarity;
@@ -48,6 +49,7 @@ public class GachaScreen extends Screen {
 	public int evo;
 	public int old_evo;
 	public int XevoX;
+	Bgm bgm;
 	
 	@Override
 	public void init() throws IOException {
@@ -59,6 +61,14 @@ public class GachaScreen extends Screen {
         second_evo = ImageIO.read(getClass().getClassLoader().getResource("res/img/character/second_evolution.gif"));
         arrow = ImageIO.read(getClass().getClassLoader().getResource("res/img/arrow.png"));
         gacha();//ガチャを引く
+        
+        bgm = new Bgm();	//Bgmインスタンスを作成
+        try {
+        	bgm.gacha();	//BGMを再生
+        } catch(Exception e) {
+        	System.out.println("例外が発生しました。");
+            System.out.println(e);
+        }
     	
 	}
 	
@@ -77,12 +87,8 @@ public class GachaScreen extends Screen {
             	// グローバル状態から EquipmentManager を取得
                 EquipmentManager manager = GlobalState.equipmentManager;
             	manager.equipItem(weaponType, getWeaponStatus);
-//                try {
-//                    nextScreen.init(); // 次の画面の初期化
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-                ScreenManager.getInstance().setScreen(nextScreen);   
+                ScreenManager.getInstance().setScreen(nextScreen);
+                bgm.stop();	//クラスフィールドbgmでstopを呼び出す
             }
         }
 	};
@@ -124,10 +130,12 @@ public class GachaScreen extends Screen {
         if(weaponType.equals(WeaponType.進化アイテム)) {
         	if(evo == 1) {
         		g.drawImage(warrior,   450, 480, 50, 50, null);
-        		g.drawImage(first_evo, 550, 380, 150, 150, null);//int x, int y, int width, int height
+        		g.drawImage(arrow,     500, 430, 100, 100, null);
+        		g.drawImage(first_evo, 600, 330, 200, 200, null);//int x, int y, int width, int height
         	} else if (evo == 2) {
-        		g.drawImage(first_evo ,   450, 480, 50, 50, null);
-        		g.drawImage(second_evo, 550, 380, 150, 150, null);
+        		g.drawImage(first_evo,  450, 480, 50, 50, null);
+        		g.drawImage(arrow,      500, 430, 100, 100, null);
+        		g.drawImage(second_evo, 600, 330, 200, 200, null);
         	} else {
         		System.out.println("これ以上進化しないよ");
         	}
@@ -135,7 +143,7 @@ public class GachaScreen extends Screen {
         
         
         //2秒経ってから「ガチャへ戻る」ボタンを表示
-        Timer timer = new Timer(2000, e -> {
+        Timer timer = new Timer(1000, e -> {
         	return_screen = true;
         });
         timer.setRepeats(false);
@@ -197,9 +205,9 @@ public class GachaScreen extends Screen {
     	// グローバル状態から 現在の Status を取得
         status = GlobalState.currentStatus;
         now_status = status;
-        evo = status.getEvolitionCount();
+        evo = status.getEvolutionCount();
         XevoX = 1;
-        old_evo = status.getEvolitionCount();
+        old_evo = status.getEvolutionCount();
         //進化アイテム入手時
         if(weaponType.equals(WeaponType.進化アイテム)) {
         	if (evo == 1) {
@@ -267,15 +275,15 @@ public class GachaScreen extends Screen {
         	//ここでステータスを倍々にしていくと表示の際も倍になりおかしくなる
         	//進化１回目
         	System.out.println("進化したね");
-            if(status.getEvolitionCount() == 1) {
+            if(status.getEvolutionCount() == 1) {
             	System.out.println(XevoX + "倍になる");
             	status.setHp(status.getHp() * XevoX);
                 status.setAttack(status.getAttack() * XevoX);
                 status.setDefense(status.getDefense() * XevoX);
                 status.setAgility(status.getAgility() * XevoX);
                 status.setLuck(status.getLuck() * XevoX);
-            	status.setevolutionCount(status.getEvolitionCount() * 2);
-            } else if(status.getEvolitionCount() == 2) {
+            	status.setevolutionCount(status.getEvolutionCount() * 2);
+            } else if(status.getEvolutionCount() == 2) {
             	//進化２回目
             	System.out.println(evo + "=evo ２回目の進化。");
             	status.setHp(status.getHp() * XevoX);
@@ -283,7 +291,7 @@ public class GachaScreen extends Screen {
                 status.setDefense(status.getDefense() * XevoX);
                 status.setAgility(status.getAgility() * XevoX);
                 status.setLuck(status.getLuck() * XevoX);
-            	status.setevolutionCount(status.getEvolitionCount() + 1);
+            	status.setevolutionCount(status.getEvolutionCount() + 1);
             } else {
             	System.out.println("最終進化してるね");
             }
